@@ -39,8 +39,12 @@ export default function Progress() {
   return (
     <>
     
+        {/* THE WHOLE PROGRESS BAR PARENT DIV */}
         <ParentDiv>
 
+            {/* THREE BARS THAT REPRESENT 3 STAGES, FIRST OF THEM WITH CLASS "ACTIVE" 
+            WHICH MAKES IT EXPAND AND CHANGE THE BACKGORUND COLOR TO LINEAR GRADIENT.
+            ALL THE TRANSITIONS HAPPEN LINEARLY AND SMOOTHLY DURING .25s. */}
             <Child className='active' />
             <Child />
             <Child />

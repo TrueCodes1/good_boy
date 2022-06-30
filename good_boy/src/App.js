@@ -1,12 +1,11 @@
-// IMPORTING COMPONENTS
-import Footer from "./components/Footer";
 
 // IMPORTING CONTAINERS
-import WelcomeView from "./containers/WelcomeView";
+import CompleteView from "./containers/CompleteView";
 
 const style = {
 
-  "fontFamily": "'Public Sans', sans-serif"
+  "fontFamily": "'Public Sans', sans-serif",
+  "boxSizing": "border-box"
 
 }
 
@@ -14,8 +13,7 @@ function App() {
   return (
     <div style={ style }>
     
-      <WelcomeView />
-      <Footer />
+      <CompleteView />
 
     </div>
   );

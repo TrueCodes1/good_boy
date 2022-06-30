@@ -11,8 +11,8 @@ const MainParent = styled.div`
     align-items: flex-start;
     justify-content: stretch; 
     border-top: 1px solid #2f2f2f16;
-    min-width: 75%;
-    max-width: 75%;
+    min-width: 100%;
+    max-width: 100%;
     left: 0;
     right: 0;
     margin: 0 auto;
