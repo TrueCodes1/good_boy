@@ -4,6 +4,7 @@ import styled from 'styled-components';
 // IMPORTING COMPONENTS
 import Footer from '../components/Footer';
 import Progress from '../components/Progress';
+import Header from '../components/Header';
 
 // IMPORING ASSETS
 import dogSide from '../assets/dog_side.png';  
@@ -26,13 +27,13 @@ const Body = styled.div`
   justify-content: stretch;
   width: 100%;
   height: fit-content;
+  padding: 100px 0 150px 0;
 
 `
 
 const ContentHalf = styled.div`
 
   width: 60%;
-  border: 4px solid blue;
 
 `
 
@@ -59,8 +60,8 @@ export default function WelcomeView() {
           <ContentHalf>
 
             <Progress />
-            
-            <h1>Content Half</h1>
+
+            <Header text='Potrebujeme od Vás zopár informácií' />
 
           </ContentHalf>
           
