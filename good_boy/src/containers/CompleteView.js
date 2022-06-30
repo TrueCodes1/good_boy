@@ -7,13 +7,15 @@ import Progress from '../components/Progress';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
+import FirstStage from '../components/FirstStage';
+
 // IMPORING ASSETS
 import dogSide from '../assets/dog_side.png';  
 
 const MainParent = styled.div`
 
-  width: 75%;
-  height: 75%;
+  width: 70%;
+  height: 70%;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -46,7 +48,8 @@ const ImageHalf = styled.div`
 
   width: 40%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: center;
 
 `
@@ -85,7 +88,9 @@ export default function WelcomeView() {
 
             <Progress />
 
-            <Header text='Potrebujeme od Vás zopár informácií' />
+            <Header text='Vyberte si možnosť, ako chcete pomôcť' />
+
+            <FirstStage />
 
             <ButtonsParent>
 
