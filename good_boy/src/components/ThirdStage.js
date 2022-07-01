@@ -74,50 +74,6 @@ const CheckboxLabel = styled.p`
 
 export default function ThirdStage() {
 
-    useEffect(() => {
-
-        // THE "CHECKBOX INPUT" STYLED COMPONENT THAT HOLDS THE TICK IMAGE
-        const checkboxParent = $(`#checkbox-input`);
-        // THE TICK IMAGE ITSELF
-        const checkboxTick = $(`#ckeckbox-tick`);
-
-        //******************************* */
-        //
-        //          FUNCTIONS
-        //
-        //******************************* */
-
-        // FUNCTION, THAT LISTENS TO CLICK EVENT ON THE INTPUT CHECKBOX ELEMENT
-        const checkCheckbox = () => {
-            
-            // IF THERE IS A CLASS "CHECKED" WITHIN THE TICK IMAGE CLASSLIST
-            // IT IS REMOVED AND THIS CAUSES THE CSS TO HIDE THE TICK BY 
-            // SETTING ITS OPACITY TO 0
-            if ($(checkboxTick).hasClass('checked')) {
-
-                $(checkboxTick).removeClass('checked');
-
-            // ELSEWAY, IT IS ADDED TO THE CLASSLIST, THIS CAUSES THE CSS
-            // TO SHOW THE TICK WITH OPACITY 1
-            } else {
-
-                $(checkboxTick).addClass('checked');
-
-            } 
-
-        }
-
-        //******************************* */
-        //
-        //       EVENT LISTENERS
-        //
-        //******************************* */
-
-        // THE DIV THAT HOLDS THE TICK IMAGE IS APPENDED THE EVENT LISTENER FOR CLICK
-        $(checkboxParent).on('click', checkCheckbox);
-
-    })
-
   return (
     <>
     
@@ -132,9 +88,9 @@ export default function ThirdStage() {
 
             <CheckboxParent>
 
-                <CheckboxInput id="checkbox-input">
+                <CheckboxInput id="checkbox-input"  onClick={ () => { $(`#checkbox-tick`).hasClass('checked') ? $(`#checkbox-tick`).removeClass('checked') : $(`#checkbox-tick`).addClass('checked') } }>
 
-                    <TickImg src={tick} id="ckeckbox-tick" />
+                    <TickImg src={tick} id="checkbox-tick" />
 
                 </CheckboxInput>
 
