@@ -8,6 +8,7 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 
 import FirstStage from '../components/FirstStage';
+import SecondStage from '../components/SecondStage';
 
 // IMPORING ASSETS
 import dogSide from '../assets/dog_side.png';  
@@ -88,9 +89,11 @@ export default function WelcomeView() {
 
             <Progress />
 
-            <Header text='Vyberte si možnosť, ako chcete pomôcť' />
+            <Header text='Potrebujeme od Vás zopár informácií' />
 
-            <FirstStage />
+            {/* <FirstStage /> */}
+
+            <SecondStage />
 
             <ButtonsParent>
 
