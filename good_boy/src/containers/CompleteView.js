@@ -9,6 +9,7 @@ import Button from '../components/Button';
 
 import FirstStage from '../components/FirstStage';
 import SecondStage from '../components/SecondStage';
+import ThirdStage from '../components/ThirdStage';
 
 // IMPORING ASSETS
 import dogSide from '../assets/dog_side.png';  
@@ -93,7 +94,9 @@ export default function WelcomeView() {
 
             {/* <FirstStage /> */}
 
-            <SecondStage />
+            {/* <SecondStage /> */}
+
+            <ThirdStage />
 
             <ButtonsParent>
 
