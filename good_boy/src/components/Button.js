@@ -59,7 +59,7 @@ export default function Button(props) {
   return (
     <>
     
-        <UniversalButton className={props.class} >{props.text}</UniversalButton>
+        <UniversalButton className={props.class} id={props.id} >{props.text}</UniversalButton>
     
     </>
   )

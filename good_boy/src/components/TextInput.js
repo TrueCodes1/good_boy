@@ -1,10 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// IMPORT STYLESHEETS
+import '../styles/animations.sass';
+
+const MainParent = styled.div`
+
+    width: 100%;
+
+    &.show {
+        animation: 1 .25s showAnimation;
+        -webkit-animation: 1 .25s showAnimation; 
+        opacity: 1
+    }
+
+`
 
 const Input = styled.input`
 
     padding: 35px 15px 15px 25px;
+    width: 100%;
     font-weight: 400;
     font-size: 16px;
     line-height: 21px;
@@ -27,6 +42,12 @@ const Input = styled.input`
         color: #2F2F2F;
     }
 
+    /* &.show {
+        animation: 1 .25s showAnimation;
+        -webkit-animation: 1 .25s showAnimation;
+        opacity: 1
+    } */
+
 `
 
 const Placeholder = styled.p`
@@ -39,16 +60,22 @@ const Placeholder = styled.p`
     line-height: 21px;
     color: #2F2F2F;
 
+    /* &.show {
+        animation: 1 .25s showAnimationPlaceholder;
+        -webkit-animation: 1 .25s showAnimationPlaceholder;
+        opacity: 1
+    } */
+
 `
 
 export default function TextInput(props) {
   return (
-    <>
-    
-        <Input type={props.type} id={props.id} name={props.name} className={props.class} placeholder={props.placeholder} />
+    <MainParent id={props.parentId} className={props.parentClass}>
 
-        <Placeholder>{props.defaultValue}</Placeholder>
-    
-    </>
+        <Input type={props.type} id={props.inputId} name={props.name} className={props.className} placeholder={props.placeholder} />
+
+        <Placeholder id={props.placeholderId} className={props.className}>{props.defaultValue}</Placeholder>
+
+    </MainParent>
   )
 }

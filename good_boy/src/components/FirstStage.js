@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import $ from 'jquery';
 
 // IMPORTING FROM MUI MATERIAL
@@ -12,6 +12,8 @@ import MenuItem from '@mui/material/MenuItem';
 import walletIcon from '../assets/wallet_icon.svg';
 import pawIcon from '../assets/paw_icon.svg';
 
+// IMPORTING STYLESHEETS
+import '../styles/animations.sass';
 
 // BUGS TO FIX:
 
@@ -28,8 +30,31 @@ const MainParent = styled.div`
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
+    min-height: 500px;
+    max-height: 500px;
+
+    &.hidden {
+        display: none;
+    }
 
 `
+
+
+// const leaveAnimation = keyframes`
+
+//     0% {
+//         transform: translateX(0);
+//         opacity: 1;
+//     }
+//     80% {
+//         opacity: 0;
+//     }
+//     100% {
+//         transform: scale(1.05);
+//         opacity: 0;
+//     }
+
+// `
 
 const DoubleChoice = styled.div`
 
@@ -37,6 +62,12 @@ const DoubleChoice = styled.div`
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
+
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
+    }
 
 `
 
@@ -122,6 +153,12 @@ const FormUpperPart = styled.div`
     width: 100%;
     height: 100%;
 
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
+    }
+
 `
 
 const UpperPartTop = styled.div`
@@ -166,6 +203,12 @@ const FormLowerPart = styled.div`
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
+    }
 
 `
 
@@ -298,7 +341,7 @@ const LowerPlaceholderPart = styled.p`
 
 `
 
-export default function FirstStage() {
+export default function FirstStage(props) {
 
     useEffect(() => {
 
@@ -390,9 +433,9 @@ export default function FirstStage() {
   return (
     <>
     
-        <MainParent>
+        <MainParent id='first-stage' className={props.parentClass}>
 
-            <DoubleChoice>
+            <DoubleChoice id='double-choice'>
 
                 <SingleChoice id="single-choice-left" className="single-choice-top active">
 
@@ -422,7 +465,7 @@ export default function FirstStage() {
 
             <FormPart>
 
-                <FormUpperPart>
+                <FormUpperPart id='form-upper-part' > 
 
                     <UpperPartTop>
 
@@ -463,7 +506,7 @@ export default function FirstStage() {
 
                 </FormUpperPart>
 
-                <FormLowerPart>
+                <FormLowerPart id='form-lower-part' >
 
                     <UpperPartTop className='single'>
 

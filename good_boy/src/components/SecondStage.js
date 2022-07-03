@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import $ from 'jquery';
-// import 'react-phone-number-input/style.css';
+
 import PhoneInput from 'react-phone-number-input';
-import'../styles/form.sass';
+
+// IMPORTING STYLESHEETS
+import'../styles/phone_input.sass';
+import'../styles/classes.sass';
+import'../styles/animations.sass';
 
 //********************************** */
 
@@ -15,6 +19,7 @@ import'../styles/form.sass';
 
 // IMPORTING COMPONENTS
 import TextInput from './TextInput';
+import PhoneNumberInput from './PhoneNumberInput';
 
 const MainParent = styled.div`
 
@@ -24,6 +29,12 @@ const MainParent = styled.div`
     align-items: stretch;
     justify-content: flex-start;
     font-family: 'Public Sans';
+    min-height: 500px;
+    max-height: 500px;
+
+    &.hidden {
+        display: none;
+    }
 
 ` 
 
@@ -38,46 +49,32 @@ const TopPart = styled.div`
     color: #2F2F2F;
     padding: 0 0 20px 0;
 
-`
-
-const PhoneNumberTopText = styled.p`
-
-    margin: 0;
-    padding: 0;
-    font-weight: 800;
-    font-size: 16px;
-    line-height: 21px;
-    color: #2F2F2F;
-    transform: translateY(-65px) translateX(25px);
+    &.show {
+        animation: 1 .25s showAnimation;
+        -webkit-animation: 1 .25s showAnimation;
+        opacity: 1
+    }
 
 `
 
-export default function SecondStage() {
+
+export default function SecondStage(props) {
 
     const [value, setValue] = useState();
 
   return (
     <>
     
-        <MainParent>
+        <MainParent id='second-stage' className={props.parentClass}>
         
-            <TopPart>O Vás</TopPart>
+            <TopPart id='top-part' className='invisible'>O Vás</TopPart>
             
-            <TextInput type="text" defaultValue="Meno" placeholder="Zadajte Vaše meno" id="input-name" class="text-input" name="name"/>
-            <TextInput type="text" defaultValue="Priezvisko" placeholder="Zadajte Vaše priezvisko" id="input-surname" class="text-input" name="surname"/>
-            <TextInput type="email" defaultValue="Email" placeholder="Zadajte Váš e-mail" id="input-email" class="text-input" name="email"/>
+            <TextInput type="text" defaultValue="Meno" placeholder="Zadajte Vaše meno" parentId="parent-name" inputId="input-name" placeholderId='input-name-placeholder' className="text-input" parentClass="invisible" name="name"/>
+            <TextInput type="text" defaultValue="Priezvisko" placeholder="Zadajte Vaše priezvisko" parentId="parent-surname" inputId="input-surname" placeholderId='input-surname-placeholder' className="text-input" parentClass="invisible" name="surname"/>
+            <TextInput type="email" defaultValue="Email" placeholder="Zadajte Váš e-mail" parentId="parent-email" inputId="input-email" placeholderId='input-email-placeholder' className="text-input" parentClass="invisible" name="email"/>
 
-            <PhoneInput
-                placeholder="Zadajte Vaše telefónne číslo"
-                defaultCountry="SK"
-                className='active'
-                international
-                countrySelectProps={{ unicodeFlags: true }}
-                value={value}
-                onChange={setValue}
-            />
-            <PhoneNumberTopText>Telefónne číslo</PhoneNumberTopText>
-            
+            <PhoneNumberInput parentClass="invisible" />
+
         </MainParent>
 
     </>

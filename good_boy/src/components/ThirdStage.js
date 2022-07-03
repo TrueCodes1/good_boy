@@ -16,6 +16,10 @@ const MainParent = styled.div`
     justify-content: flex-start;
     width: 100%;
 
+    &.hidden {
+        display: none;
+    }
+
 `
 
 const CheckboxParent = styled.div`
@@ -72,12 +76,12 @@ const CheckboxLabel = styled.p`
 
 `
 
-export default function ThirdStage() {
+export default function ThirdStage(props) {
 
   return (
     <>
     
-        <MainParent>
+        <MainParent id='third-stage' className={props.parentClass}>
 
             <RecapElement heading="Akou formou chcem pomôcť" info="Chcem finančne prispieť celej nadácii" />
             <RecapElement heading="Najviac mi záleží na útulku" info="Mestský útulok, Žilina" />
