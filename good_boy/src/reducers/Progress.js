@@ -2,6 +2,10 @@ const progressReducer = (state = 1, action) => {
 
     switch(action.type) {
 
+        case 'SET_PROGRESS':
+
+            return action.payload.toSet
+
         case 'MOVEON':
 
             if (state <= 2) {

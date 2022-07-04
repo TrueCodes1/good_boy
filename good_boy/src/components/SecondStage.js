@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PhoneInput from 'react-phone-number-input';
 
 // IMPORTING REDUX ACTIONS
-import { moveForth, moveBackward } from '../actions/Progress';
+import { moveForth, moveBackward, setProgress } from '../actions/Progress';
 
 // IMPORTING STYLESHEETS
 import'../styles/phone_input.sass';
@@ -188,313 +188,142 @@ export default function SecondStage(props) {
     
         const moveOnSecond = () => {
 
-            switch (progress) {
+            // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+
+            let timeout2 = 0;
+
+            // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+            // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+            // APPENDED TO IT. 
+            secondViewComponents.forEach(component => {
+
+            setTimeout(() => {
+
+                $(component).removeClass('show');
+                $(component).addClass('hide');
+
+            }, timeout2)
+
+            // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+            // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+            timeout2 += 100;
+
+            });
+
+            // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+            // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+            // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+            setTimeout(() => {
+
+                $(secondStage).addClass('hidden');
     
-                case 1:
-                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-        
-                    let timeout = 0;
-        
-                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-                    // APPENDED TO IT. 
-                    firstViewComponents.forEach(component => {
-        
-                    setTimeout(() => {
-        
-                        $(component).removeClass('show');
-                        $(component).addClass('hide');
-        
-                    }, timeout)
-        
-                    // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                    // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                    timeout += 100;
-        
-                    });
-        
-                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-                    setTimeout(() => {
-        
-                        $(firstStage).addClass('hidden');
-            
-                        firstViewComponents.forEach(component => {
-            
-                            $(component).removeClass('hide');
-                            $(component).addClass('invisible');
-            
-                        })
-        
-                    }, timeout + 250)
-        
-                    setTimeout(() => {
-        
-                        // THE TIMEOUT VARIABLE IS RESET TO 0
-                        timeout = 0;
-            
-                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                        $(header).html(`${Headers.second}`)
-                        
-                        $(secondStage).removeClass('hidden');
-            
-                        secondViewComponents.forEach(component => {
-            
-                            setTimeout(() => {
-            
-                            $(component).addClass('show');
+                secondViewComponents.forEach(component => {
+    
+                    $(component).removeClass('hide');
+                    $(component).addClass('invisible');
+    
+                })
+
+            }, timeout2 + 250)
+
+            setTimeout(() => {
+
+                // THE TIMEOUT VARIABLE IS RESET TO 0
+                timeout2 = 0;
+    
+                // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                $(header).html(`${Headers.third}`)
                 
-                            }, timeout)
-                
-                            // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                            // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                            timeout += 100;
-                
-                        })
-        
-                    }, timeout + 200)
-        
-                    currentView = 'second';
-                    dispatch(moveForth());
-        
-                    break
-                
-                case 2:
-                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-        
-                    let timeout2 = 0;
-        
-                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-                    // APPENDED TO IT. 
-                    secondViewComponents.forEach(component => {
-        
+                $(thirdStage).removeClass('hidden');
+    
+                thirdViewComponents.forEach(component => {
+    
                     setTimeout(() => {
-        
-                        $(component).removeClass('show');
-                        $(component).addClass('hide');
-        
+    
+                    $(component).addClass('show');
+    
                     }, timeout2)
-        
+    
                     // FOR EACH OF THE COMPONENTS, THE TIME WHEN
                     // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
                     timeout2 += 100;
-        
-                    });
-        
-                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-                    setTimeout(() => {
-        
-                        $(secondStage).addClass('hidden');
-            
-                        secondViewComponents.forEach(component => {
-            
-                            $(component).removeClass('hide');
-                            $(component).addClass('invisible');
-            
-                        })
-        
-                    }, timeout2 + 250)
-        
-                    setTimeout(() => {
-        
-                        // THE TIMEOUT VARIABLE IS RESET TO 0
-                        timeout2 = 0;
-            
-                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                        $(header).html(`${Headers.third}`)
-                        
-                        $(thirdStage).removeClass('hidden');
-            
-                        thirdViewComponents.forEach(component => {
-            
-                            setTimeout(() => {
-            
-                            $(component).addClass('show');
-            
-                            }, timeout2)
-            
-                            // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                            // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                            timeout2 += 100;
-            
-                        })
-        
-                    }, timeout2 + 200)
-        
-                    currentView = 'third';
-                    dispatch(moveForth());
-        
-                    break
-        
-                case 3:
-                    
-                    alert('Checking and sending')
-        
-                    break
-            
-                default:
-                    alert('default')
-        
-            }
-      
+    
+                })
+
+            }, timeout2 + 200)
+
+            currentView = 'third';
+            dispatch(setProgress(3))
+
           }
       
         const moveBackSecond = () => {
+
+            // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
     
-            switch (progress) {
-        
-                case 1:
+            let timeout = 0;
+    
+            // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+            // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+            // APPENDED TO IT. 
+            secondViewComponents.forEach(component => {
+    
+                setTimeout(() => {
+    
+                    $(component).removeClass('show');
+                    $(component).addClass('hide');
+    
+                }, timeout)
+    
+                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                timeout += 100;
+    
+            });
+    
+            // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+            // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+            // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+            setTimeout(() => {
+    
+                secondViewComponents.forEach(component => {
+    
+                $(component).removeClass('hide');
+    
+                })
+    
+                $(secondStage).addClass('hidden');
+    
+            }, timeout + 250)
+    
+            setTimeout(() => {
+    
+                // THE TIMEOUT VARIABLE IS RESET TO 0
+                timeout = 0;
+    
+                // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                $(header).html(`${Headers.first}`)
                 
-                    alert('There is nowhere else to move backward.')
-            
-                    break
-                
-                case 2:
-                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-            
-                    let timeout = 0;
-            
-                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-                    // APPENDED TO IT. 
-                    secondViewComponents.forEach(component => {
-            
-                        setTimeout(() => {
-            
-                            $(component).removeClass('show');
-                            $(component).addClass('hide');
-            
-                        }, timeout)
-            
-                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                        timeout += 100;
-            
-                    });
-            
-                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-                    setTimeout(() => {
-            
-                        secondViewComponents.forEach(component => {
-            
-                        $(component).removeClass('hide');
-            
-                        })
-            
-                        $(secondStage).addClass('hidden');
-            
-                    }, timeout + 250)
-            
-                    setTimeout(() => {
-            
-                        // THE TIMEOUT VARIABLE IS RESET TO 0
-                        timeout = 0;
-            
-                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                        $(header).html(`${Headers.first}`)
-                        
-                        $(firstStage).removeClass('hidden');
-            
-                        firstViewComponents.forEach(component => {
-            
-                        setTimeout(() => {
-            
-                            $(component).addClass('show');
-            
-                        }, timeout)
-            
-                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                        timeout += 100;
-            
-                        })
-            
-                    }, timeout + 200)
-            
-                    currentView = 'first';
-                    dispatch(moveBackward());
-            
-                    break
-        
-                case 3:
-                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-            
-                    let timeout2 = 0;
-            
-                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-                    // APPENDED TO IT. 
-                    thirdViewComponents.forEach(component => {
-            
-                        setTimeout(() => {
-            
-                            $(component).removeClass('show');
-                            $(component).addClass('hide');
-            
-                        }, timeout2)
-            
-                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                        timeout2 += 100;
-            
-                    });
-            
-                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-                    setTimeout(() => {
-            
-                        thirdViewComponents.forEach(component => {
-            
-                        $(component).removeClass('hide');
-            
-                        })
-            
-                        $(thirdStage).addClass('hidden');
-            
-                    }, timeout2 + 250)
-            
-                    setTimeout(() => {
-            
-                        // THE TIMEOUT VARIABLE IS RESET TO 0
-                        timeout2 = 0;
-            
-                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                        $(header).html(`${Headers.second}`)
-                        
-                        $(secondStage).removeClass('hidden');
-            
-                        secondViewComponents.forEach(component => {
-            
-                        setTimeout(() => {
-            
-                            $(component).addClass('show');
-            
-                        }, timeout2)
-            
-                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                        timeout2 += 100;
-            
-                        })
-            
-                    }, timeout2 + 200)
-            
-                    currentView = 'second';
-                    dispatch(moveBackward());
-            
-                    break
-        
-                default:
-                    alert('default')
-        
-            }
+                $(firstStage).removeClass('hidden');
+    
+                firstViewComponents.forEach(component => {
+    
+                setTimeout(() => {
+    
+                    $(component).addClass('show');
+    
+                }, timeout)
+    
+                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                timeout += 100;
+    
+                })
+    
+            }, timeout + 200)
+    
+            currentView = 'first';
+            dispatch(setProgress(1))
     
         }
     

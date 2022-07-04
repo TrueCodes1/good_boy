@@ -94,36 +94,19 @@ const ChoiceText = styled.p`
 
 export default function DoubleChoice() {
 
-    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
+    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp);
     const shelter = useSelector(state => state.firstStage.shelter);
     const amount = useSelector(state => state.firstStage.amount);
 
     const dispatch = useDispatch();
     // const [shelter, setShelter] = useState('');
 
-    const handleChange = (e) => {
+    const setLeft = () => {
+        dispatch(updateFirstStageHelper('specific_shelter', shelter, amount))
+    }
 
-        const identifyDecision = (e) => {
-            
-            switch (e.target.id) {
-
-                case 'single-choice-left':
-                    return 'specific_shelter'
-
-                case 'single-choice-right':
-                    return 'whole_organisation'
-
-                default:
-                    return '';
-
-            }
-            
-        }
-
-        let decision = identifyDecision(e)
-
-        dispatch(updateFirstStageHelper(decision, shelter, amount))
-
+    const setRight = () => {
+        dispatch(updateFirstStageHelper('whole_organisation', shelter, amount))
     }
 
   return (
@@ -131,7 +114,7 @@ export default function DoubleChoice() {
     
         <DoubleChoiceParent id='double-choice'>
 
-            <SingleChoice id="single-choice-left" className="single-choice-top active" onClick={handleChange}>
+            <SingleChoice id="single-choice-left" className="single-choice-top active" onClick={setLeft}>
 
                 <ChoiceImageParent>
 
@@ -143,7 +126,7 @@ export default function DoubleChoice() {
 
             </SingleChoice>
 
-            <SingleChoice id="single-choice-right" className='single-choice-top right' onClick={handleChange}>
+            <SingleChoice id="single-choice-right" className='single-choice-top right' onClick={setRight}>
 
                 <ChoiceImageParent>
 
