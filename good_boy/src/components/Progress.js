@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import $ from 'jquery';
+import { useSelector } from 'react-redux';
 
 
 const ParentDiv = styled.div`
@@ -36,18 +37,22 @@ const Child = styled.div`
 
 export default function Progress() {
 
+    const progress = useSelector(state => state.progress);
+
   return (
     <>
     
         {/* THE WHOLE PROGRESS BAR PARENT DIV */}
+
         <ParentDiv>
 
             {/* THREE BARS THAT REPRESENT 3 STAGES, FIRST OF THEM WITH CLASS "ACTIVE" 
             WHICH MAKES IT EXPAND AND CHANGE THE BACKGORUND COLOR TO LINEAR GRADIENT.
             ALL THE TRANSITIONS HAPPEN LINEARLY AND SMOOTHLY DURING .25s. */}
-            <Child className='active' />
-            <Child />
-            <Child />
+
+            <Child className={`${progress === 1 ? 'active' : ''}`}/>
+            <Child className={`${progress === 2 ? 'active' : ''}`}/>
+            <Child className={`${progress === 3 ? 'active' : ''}`}/>
 
         </ParentDiv>
     

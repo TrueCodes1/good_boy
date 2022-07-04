@@ -5,8 +5,12 @@ import $ from 'jquery';
 // IMPORTING COMPONENTS
 import RecapElement from './RecapElement';
 
-// IMPORTING ASSEST
+// IMPORTING ASSESTS
 import tick from '../assets/tick.svg';
+
+// IMPORTING STYLESHEETS
+import '../styles/classes.sass';
+import '../styles/animations.sass';
 
 const MainParent = styled.div`
 
@@ -15,6 +19,8 @@ const MainParent = styled.div`
     align-items: stretch;
     justify-content: flex-start;
     width: 100%;
+    min-height: 500px;
+    max-height: 500px;
 
     &.hidden {
         display: none;
@@ -83,14 +89,14 @@ export default function ThirdStage(props) {
     
         <MainParent id='third-stage' className={props.parentClass}>
 
-            <RecapElement heading="Akou formou chcem pomôcť" info="Chcem finančne prispieť celej nadácii" />
-            <RecapElement heading="Najviac mi záleží na útulku" info="Mestský útulok, Žilina" />
-            <RecapElement heading="Suma ktorou chcem pomôcť" info="50 €" />
-            <RecapElement heading="Meno a priezvisko" info="Norbert Sviatko" />
-            <RecapElement heading="E-mailová adresa" info="truecodes.dev@gmail.com" />
-            <RecapElement heading="Telefónne číslo" info="+421 907 337 618" />
+            <RecapElement parentId="recap-1" parentClass="invisible" heading="Akou formou chcem pomôcť" info="Chcem finančne prispieť celej nadácii" />
+            <RecapElement parentId="recap-2" parentClass="invisible" heading="Najviac mi záleží na útulku" info="Mestský útulok, Žilina" />
+            <RecapElement parentId="recap-3" parentClass="invisible" heading="Suma ktorou chcem pomôcť" info="50 €" />
+            <RecapElement parentId="recap-4" parentClass="invisible" heading="Meno a priezvisko" info="Norbert Sviatko" />
+            <RecapElement parentId="recap-5" parentClass="invisible" heading="E-mailová adresa" info="truecodes.dev@gmail.com" />
+            <RecapElement parentId="recap-6" parentClass="invisible" heading="Telefónne číslo" info="+421 907 337 618" />
 
-            <CheckboxParent>
+            <CheckboxParent id='parent-checkbox' className="invisible">
 
                 <CheckboxInput id="checkbox-input"  onClick={ () => { $(`#checkbox-tick`).hasClass('checked') ? $(`#checkbox-tick`).removeClass('checked') : $(`#checkbox-tick`).addClass('checked') } }>
 

@@ -55,6 +55,12 @@ const TopPart = styled.div`
         opacity: 1
     }
 
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
+    }
+    
 `
 
 

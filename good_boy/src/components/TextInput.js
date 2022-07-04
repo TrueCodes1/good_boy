@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 // IMPORT STYLESHEETS
+import '../styles/classes.sass';
 import '../styles/animations.sass';
 
 const MainParent = styled.div`
@@ -14,6 +15,12 @@ const MainParent = styled.div`
         opacity: 1
     }
 
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
+    }
+    
 `
 
 const Input = styled.input`

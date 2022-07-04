@@ -5,6 +5,7 @@ import PhoneInput from 'react-phone-number-input';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass'
+import'../styles/phone_input.sass';
 
 const MainParent = styled.div`
 
@@ -14,6 +15,12 @@ const MainParent = styled.div`
         animation: 1 .25s showAnimation;
         -webkit-animation: 1 .25s showAnimation;
         opacity: 1;
+    }
+
+    &.hide {
+        animation: 1 .25s leaveAnimation;
+        -webkit-animation: 1 .25s leaveAnimation;
+        opacity: 0;
     }
 
 `
@@ -27,12 +34,6 @@ const PhoneNumberTopText = styled.p`
     line-height: 21px;
     color: #2F2F2F;
     transform: translateY(-65px) translateX(25px);
-
-    &.show {
-        animation: 1 .25s showAnimation;
-        -webkit-animation: 1 .25s showAnimation;
-        opacity: 1;
-    }
 
 `
 

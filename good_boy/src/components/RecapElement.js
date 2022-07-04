@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// IMPORTING STYLESHEETS
+import '../styles/classes.sass';
+import '../styles/animations.sass';
 
 const MainParent = styled.div`
 
@@ -43,7 +46,7 @@ export default function RecapElement(props) {
   return (
     <>
     
-        <MainParent>
+        <MainParent id={props.parentId} className={props.parentClass}>
 
             <InfoHeading>{props.heading}</InfoHeading>
 
