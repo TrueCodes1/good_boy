@@ -31,6 +31,7 @@ const UniversalButton = styled.button`
 
     &.forth {
 
+        transition: .25s ease;
         color: #fff;
         background: #9F9F9F;
         box-shadow: 0px 100px 80px rgba(0, 0, 0, 0.07), 
@@ -42,6 +43,7 @@ const UniversalButton = styled.button`
 
         &.active {
 
+            transition: all .25s ease;
             background: linear-gradient(115.41deg, #CD8A64 -1.77%, #C4794F 73.03%);
             box-shadow: 0px 100px 80px rgba(0, 0, 0, 0.07), 
                         0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198), 

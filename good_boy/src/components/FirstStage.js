@@ -1,19 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import $ from 'jquery';
+import { useSelector, useDispatch } from 'react-redux';
 
-// IMPORTING FROM MUI MATERIAL
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-
-// IMPORTING ASSETS
-import walletIcon from '../assets/wallet_icon.svg';
-import pawIcon from '../assets/paw_icon.svg';
+// IMPORTING REDUX ACTIONS
+import { fetchShelters } from '../actions/Shelters';
+import { moveForth, moveBackward } from '../actions/Progress';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass';
+import '../styles/classes.sass';
+
+// IMPORTING COMPONENTS
+import DoubleChoice from './DoubleChoice';
+import SheltersList from './SheltersList';
+import ChoiceMoney from './ChoiceMoney';
+import Button from './Button';
+
+// IMPORTING JSONS
+import Headers from '../jsons/headers.json';
 
 // BUGS TO FIX:
 
@@ -30,15 +35,14 @@ const MainParent = styled.div`
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    min-height: 500px;
-    max-height: 500px;
+    min-height: 600px;
+    max-height: 600px;
 
     &.hidden {
         display: none;
     }
 
 `
-
 
 // const leaveAnimation = keyframes`
 
@@ -55,85 +59,6 @@ const MainParent = styled.div`
 //     }
 
 // `
-
-const DoubleChoice = styled.div`
-
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: center;
-
-    &.hide {
-        animation: 1 .25s leaveAnimation;
-        -webkit-animation: 1 .25s leaveAnimation;
-        opacity: 0;
-    }
-
-`
-
-const SingleChoice = styled.div`
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    border: 1px solid #CD8B65;
-    background: #FAF9F9;
-    width: 100%;
-    padding: 20px;
-    color: #585757;
-    border-radius: 24px 0 0 24px;
-    cursor: pointer;
-        transition: .25s ease-in-out;
-
-    &.right {
-
-        border-radius: 0 24px 24px 0;
-
-    }   
-
-    &.active {
-
-        background: linear-gradient(180deg, #CD8B65 0%, #BB6B3D 100%);
-        box-shadow: 0px 100px 80px rgba(0, 0, 0, 0.07), 
-                    0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198), 
-                    0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275), 
-                    0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035), 
-                    0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725), 
-                    0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802);
-        color: #fff;
-        transition: .25s ease-in-out;
-    
-    }
-
-
-`
-
-const ChoiceImageParent = styled.div`
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border-radius: 100px;
-    background: #2f2f2f18;
-
-`
-
-const ChoiceImage = styled.img`
-
-
-
-`
-
-const ChoiceText = styled.p`
-
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 21px;
-    max-width: 300px;
-
-`
 
 const FormPart = styled.div`
 
@@ -212,139 +137,441 @@ const FormLowerPart = styled.div`
 
 `
 
-const ChoicesMoney = styled.div`
+const ButtonsParent = styled.div`
 
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  transform: translateY(60px);
 
-`
+  &.single {
 
-const SingleChoiceMoney = styled.div`
+    justify-content: flex-end;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #DFDFDF;
-    padding: 15px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 16px;
-    color: #2f2f2f;
-    margin: 0 3.5px;
-    cursor: pointer;
-    transition: .25s ease;
-    user-select: none;
-
-    &:first-child {
-        margin: 0 3.5px 0 0;
-    }
-
-    &.active {
-        transition: .25s ease;
-        background: linear-gradient(115.41deg, #CD8A64 -1.77%, #C4794F 73.03%);
-        color: #FFFFFF;
-        border: 2px solid #CD8A64;
-    }
-
-`
-
-const OwnChoiceMoney = styled.div`
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #DFDFDF;
-    padding: 15px;
-    border-radius: 10px;
-    font-family: 'Public Sans';
-    font-weight: 800;
-    font-size: 16px;
-    color: #2F2F2F;
-    margin: 0 3.5px;
-    transition: .25s ease;
-    user-select: none;
-    cursor: pointer;
-
-    &.active {
-        transition: .25s ease;
-        background: linear-gradient(115.41deg, #CD8A64 -1.77%, #C4794F 73.03%);
-        color: #FFFFFF;
-        border: 2px solid #CD8A64;
-    }
-
-    &.active > input {
-        border-bottom: 1px solid #fff;
-        color: #fff;
-    }
-
-`
-
-const OwnChoiceInput = styled.input`
-
-    &:hover,
-    &:focus,
-    &:active,
-    &:visited{
-        border-bottom: 1px solid #C9C9C9;
-        outline: none;
-        background: transparent;
-    }
-
-    border: none;
-    outline: none;
-    border-bottom: 1px solid #C9C9C9;
-    min-width: 33px;
-    max-width: 33px;
-    padding: 5px;
-    font-family: 'Public Sans';
-    font-weight: 800;
-    font-size: 16px;
-    color: #2F2F2F;
-    background: transparent;
-    margin-right: 5px;
-
-`
-
-const placeholderStyle = {
-
-    display: "flex",
-    flexDirection: "column",
-    alignItem: "center",
-    justifyContent: "center",
-    paddingLeft: "10px",
-
-}
-
-const UpperPlaceholderPart = styled.p`
-    
-    font-family: 'Public Sans';
-    font-style: normal;
-    font-weight: 800;
-    font-size: 16px;
-    color: #2F2F2F;
-    margin: 0;
-    padding: 0;
-
-`
-
-const LowerPlaceholderPart = styled.p`
-    
-    font-family: 'Public Sans';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    color: #9F9F9F;
-    margin: 0;
-    padding: 0;
+  }
 
 `
 
 export default function FirstStage(props) {
 
+    const progress = useSelector(state => state.progress);
+
+    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
+    const shelter = useSelector(state => state.firstStage.shelter);
+    const amount = useSelector(state => state.firstStage.amount);
+
+    const dispatch = useDispatch();
+
     useEffect(() => {
 
+        const firstStage = $(`#first-stage`);
+        const secondStage = $(`#second-stage`);
+        const thirdStage = $(`#third-stage`);
+    
+        const header = $(`#header`);
+    
+        const backBtn = $(`#back-btn-first`);
+        const forthBtn = $(`#forth-btn-first`);
+    
+        let currentView = 'first';
+    
+        // FIRST VIEW COMPONENTS
+        
+        let firstViewComponents = [header];
+    
+        let doubleChoice = $(`#double-choice`);
+        firstViewComponents.push(doubleChoice);
+    
+        let formUpperPart = $(`#form-upper-part`);
+        firstViewComponents.push(formUpperPart);
+        
+        let formLowerPart = $(`#form-lower-part`);
+        firstViewComponents.push(formLowerPart);
+
+        let buttonsFirst = $(`#buttons-first-stage`);
+        firstViewComponents.push(buttonsFirst);
+    
+        // SECOND VIEW COMPONENTS
+    
+        let secondViewComponents = [header];
+    
+        let topPart = $(`#top-part`);
+        secondViewComponents.push(topPart);
+    
+        let nameParent = $(`#parent-name`);
+        secondViewComponents.push(nameParent);
+    
+        let surnameParent = $(`#parent-surname`);
+        secondViewComponents.push(surnameParent);
+        
+        let emailParent = $(`#parent-email`);
+        secondViewComponents.push(emailParent);
+        
+        let parentPhoneInput = $(`#parent-phone-number`);
+        secondViewComponents.push(parentPhoneInput);
+        
+        let buttonsSecond = $(`#buttons-second-stage`);
+        secondViewComponents.push(buttonsSecond);
+        
+        // SECOND VIEW COMPONENTS
+    
+        let thirdViewComponents = [header];
+    
+        let recap1 = $(`#recap-1`);
+        thirdViewComponents.push(recap1);
+    
+        let recap2 = $(`#recap-2`);
+        thirdViewComponents.push(recap2);
+    
+        let recap3 = $(`#recap-3`);
+        thirdViewComponents.push(recap3);
+        
+        let recap4 = $(`#recap-4`);
+        thirdViewComponents.push(recap4);
+        
+        let recap5 = $(`#recap-5`);
+        thirdViewComponents.push(recap5);
+        
+        let recap6 = $(`#recap-6`);
+        thirdViewComponents.push(recap6);
+      
+        let parentCheckbox = $(`#parent-checkbox`);
+        thirdViewComponents.push(parentCheckbox);
+    
+        /********************************* */
+        //
+        //           FUNCTIONS
+        //
+        /********************************* */
+    
+        const moveOnFirst = () => {
+
+            if (typeOfHelp !== '' && shelter !== '' && amount !== '') {
+
+                switch (progress) {
+        
+                    case 1:
+                        // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+            
+                        let timeout = 0;
+            
+                        // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+                        // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+                        // APPENDED TO IT. 
+                        firstViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).removeClass('show');
+                            $(component).addClass('hide');
+            
+                        }, timeout)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout += 100;
+            
+                        });
+            
+                        // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+                        // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+                        // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+                        setTimeout(() => {
+            
+                            $(firstStage).addClass('hidden');
+                
+                            firstViewComponents.forEach(component => {
+                
+                                $(component).removeClass('hide');
+                                $(component).addClass('invisible');
+                
+                            })
+            
+                        }, timeout + 250)
+            
+                        setTimeout(() => {
+            
+                            // THE TIMEOUT VARIABLE IS RESET TO 0
+                            timeout = 0;
+                
+                            // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                            $(header).html(`${Headers.second}`)
+                            
+                            $(secondStage).removeClass('hidden');
+                
+                            secondViewComponents.forEach(component => {
+                
+                                setTimeout(() => {
+                
+                                $(component).addClass('show');
+                    
+                                }, timeout)
+                    
+                                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                                timeout += 100;
+                    
+                            })
+            
+                        }, timeout + 200)
+            
+                        currentView = 'second';
+                        dispatch(moveForth());
+            
+                        break
+                    
+                    case 2:
+                        // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+            
+                        let timeout2 = 0;
+            
+                        // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+                        // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+                        // APPENDED TO IT. 
+                        secondViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).removeClass('show');
+                            $(component).addClass('hide');
+            
+                        }, timeout2)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout2 += 100;
+            
+                        });
+            
+                        // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+                        // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+                        // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+                        setTimeout(() => {
+            
+                            $(secondStage).addClass('hidden');
+                
+                            secondViewComponents.forEach(component => {
+                
+                                $(component).removeClass('hide');
+                                $(component).addClass('invisible');
+                
+                            })
+            
+                        }, timeout2 + 250)
+            
+                        setTimeout(() => {
+            
+                            // THE TIMEOUT VARIABLE IS RESET TO 0
+                            timeout2 = 0;
+                
+                            // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                            $(header).html(`${Headers.third}`)
+                            
+                            $(thirdStage).removeClass('hidden');
+                
+                            thirdViewComponents.forEach(component => {
+                
+                                setTimeout(() => {
+                
+                                $(component).addClass('show');
+                
+                                }, timeout2)
+                
+                                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                                timeout2 += 100;
+                
+                            })
+            
+                        }, timeout2 + 200)
+            
+                        currentView = 'third';
+                        dispatch(moveForth());
+            
+                        break
+            
+                    case 3:
+                        
+                        alert('Checking and sending')
+            
+                        break
+                
+                    default:
+                        alert('default')
+            
+                }
+                  
+            }
+      
+        }
+      
+        const moveBackFirst = () => {
+
+            switch (progress) {
+        
+                case 1:
+                
+                    alert('There is nowhere else to move backward.')
+            
+                    break
+                
+                case 2:
+                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+            
+                    let timeout = 0;
+            
+                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+                    // APPENDED TO IT. 
+                    secondViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).removeClass('show');
+                            $(component).addClass('hide');
+            
+                        }, timeout)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout += 100;
+            
+                    });
+            
+                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+                    setTimeout(() => {
+            
+                        secondViewComponents.forEach(component => {
+            
+                        $(component).removeClass('hide');
+            
+                        })
+            
+                        $(secondStage).addClass('hidden');
+            
+                    }, timeout + 250)
+            
+                    setTimeout(() => {
+            
+                        // THE TIMEOUT VARIABLE IS RESET TO 0
+                        timeout = 0;
+            
+                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                        $(header).html(`${Headers.first}`)
+                        
+                        $(firstStage).removeClass('hidden');
+            
+                        firstViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).addClass('show');
+            
+                        }, timeout)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout += 100;
+            
+                        })
+            
+                    }, timeout + 200)
+            
+                    currentView = 'first';
+                    dispatch(moveBackward());
+            
+                    break
+        
+                case 3:
+                    // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+            
+                    let timeout2 = 0;
+            
+                    // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+                    // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+                    // APPENDED TO IT. 
+                    thirdViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).removeClass('show');
+                            $(component).addClass('hide');
+            
+                        }, timeout2)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout2 += 100;
+            
+                    });
+            
+                    // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+                    // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+                    // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+                    setTimeout(() => {
+            
+                        thirdViewComponents.forEach(component => {
+            
+                        $(component).removeClass('hide');
+            
+                        })
+            
+                        $(thirdStage).addClass('hidden');
+            
+                    }, timeout2 + 250)
+            
+                    setTimeout(() => {
+            
+                        // THE TIMEOUT VARIABLE IS RESET TO 0
+                        timeout2 = 0;
+            
+                        // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                        $(header).html(`${Headers.second}`)
+                        
+                        $(secondStage).removeClass('hidden');
+            
+                        secondViewComponents.forEach(component => {
+            
+                        setTimeout(() => {
+            
+                            $(component).addClass('show');
+            
+                        }, timeout2)
+            
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout2 += 100;
+            
+                        })
+            
+                    }, timeout2 + 200)
+            
+                    currentView = 'second';
+                    dispatch(moveBackward());
+            
+                    break
+        
+                default:
+                    alert('default')
+        
+            }
+    
+        }
+    
+        /********************************** */
+        //
+        //         EVENT LISTENERS
+        //
+        /********************************** */
+    
+        $(backBtn).on('click', moveBackFirst);
+    
+        $(forthBtn).on('click', moveOnFirst);
+    
         // THE TWO CHOCIES AT THE TOP WHERE CUSTOMER DECIDES WHAT TYPE OF FINANCIAL
         // HELP THEY WANT TO OFFER
         let singleChoicesTop = document.getElementsByClassName(`single-choice-top`);
@@ -435,33 +662,7 @@ export default function FirstStage(props) {
     
         <MainParent id='first-stage' className={props.parentClass}>
 
-            <DoubleChoice id='double-choice'>
-
-                <SingleChoice id="single-choice-left" className="single-choice-top active">
-
-                    <ChoiceImageParent>
-
-                        <ChoiceImage src={ walletIcon } />
-
-                    </ChoiceImageParent>
-
-                    <ChoiceText>Chcem finančne prispieť konkrétnemu útulku</ChoiceText>
-
-                </SingleChoice>
-                
-                <SingleChoice id="single-choice-right" className='single-choice-top right'>
-
-                    <ChoiceImageParent>
-
-                        <ChoiceImage src={ pawIcon } />
-
-                    </ChoiceImageParent>
-
-                    <ChoiceText>Chcem finančne prispieť celej nadácii</ChoiceText>
-
-                </SingleChoice>
-
-            </DoubleChoice>
+            <DoubleChoice />
 
             <FormPart>
 
@@ -475,34 +676,7 @@ export default function FirstStage(props) {
 
                     </UpperPartTop>
 
-                    <FormControl fullWidth>
-
-                        <InputLabel style={placeholderStyle}>
-
-                            <UpperPlaceholderPart>Útulok</UpperPlaceholderPart>
-                            <LowerPlaceholderPart>Vyberte si zo zoznamu útulkov</LowerPlaceholderPart>
-                            
-                        </InputLabel>
-
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Útulok"
-                            sx={{
-
-                                paddingBottom: '20px',
-                                borderRadius: '8px'
-
-                            }}
-                        >
-
-                            <MenuItem value={'utulok1'}>Útulok 1</MenuItem>
-                            <MenuItem value={'utulok2'}>Útulok 2</MenuItem>
-                            <MenuItem value={'utulok3'}>Útulok 3</MenuItem>
-                        
-                        </Select>
-
-                    </FormControl>
+                    <SheltersList />
 
                 </FormUpperPart>
 
@@ -514,28 +688,19 @@ export default function FirstStage(props) {
 
                     </UpperPartTop>
 
-                    <ChoicesMoney>
-
-                        <SingleChoiceMoney className='single-choice-money' id='5-eur'>5 €</SingleChoiceMoney>
-                        <SingleChoiceMoney className='single-choice-money' id='10-eur'>10 €</SingleChoiceMoney>
-                        <SingleChoiceMoney className='single-choice-money' id='20-eur'>20 €</SingleChoiceMoney>
-                        <SingleChoiceMoney className='single-choice-money' id='30-eur'>30 €</SingleChoiceMoney>
-                        <SingleChoiceMoney className='single-choice-money' id='50-eur'>50 €</SingleChoiceMoney>
-                        <SingleChoiceMoney className='single-choice-money' id='100-eur'>100 €</SingleChoiceMoney>
-
-                        <OwnChoiceMoney id="own-choice-money">
-
-                            <OwnChoiceInput type="text" id="own-choice-money-input" />
-
-                            €
-
-                        </OwnChoiceMoney>
-
-                    </ChoicesMoney>
+                    <ChoiceMoney />
 
                 </FormLowerPart>
 
             </FormPart>
+
+            <ButtonsParent id='buttons-first-stage' className='single'>
+
+              <Button text='Späť' class='back hidden' id='back-btn-first' />
+
+              <Button text='Pokračovať' class={`forth ${typeOfHelp !== '' && shelter !== '' && amount !== '' ? 'active' : ''}`} id='forth-btn-first' />
+
+            </ButtonsParent>
 
         </MainParent>
     

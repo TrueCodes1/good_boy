@@ -2,17 +2,29 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createStore } from 'redux';
-import allReducers from './reducers';
+import { compose, applyMiddleware, createStore } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 
+// IMPORTING REDUX REDUCERS
+import allReducers from './reducers';
+
+// IMORTING REDUX ACTIONS
+import { fetchShelters } from './actions/Shelters';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+//code to setup redux dev tools
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
 
   allReducers,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  composeEnhancers(applyMiddleware(thunk))
 
 );
+
+store.dispatch(fetchShelters());
 
 root.render(
   <Provider store={store}>
