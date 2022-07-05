@@ -93,9 +93,23 @@ export default function SecondStage(props) {
 
     const progress = useSelector(state => state.progress);
 
-    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
-    const shelter = useSelector(state => state.firstStage.shelter);
-    const amount = useSelector(state => state.firstStage.amount);
+    const secondStageState = useSelector(state => state.secondStage);
+
+    const name = useSelector(state => state.secondStage.name);
+    const surname = useSelector(state => state.secondStage.surname);
+    const email = useSelector(state => state.secondStage.email);
+    const number = useSelector(state => state.secondStage.number);
+    const isReady = useSelector(state => state.secondStage.isReady);
+
+    const handleChange = (e) => {
+
+        let id = e.target.id;
+        let value = e.target.value;
+
+        console.log(id)
+        console.log(value)
+
+    }
 
     const dispatch = useDispatch();
 
@@ -186,76 +200,106 @@ export default function SecondStage(props) {
         //
         /********************************* */
     
+        const verifier = (value) => {
+
+            let isCorrect = false;
+
+            if (value.replaceAll(' ', '').length > 0) {
+
+                isCorrect = true;
+
+            }
+
+            return isCorrect;
+
+        }
+
         const moveOnSecond = () => {
 
-            // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
+            let nameValue = $(`#input-name`).val();
+            let surnameValue = $(`#input-surname`).val();
+            let emailValue = $(`#input-email`).val();
+            let numberValue = $(`#phone-input`).attr('value');
 
-            let timeout2 = 0;
+            let checkList = [
+                verifier(nameValue),
+                verifier(surnameValue),
+                verifier(emailValue),
+                verifier(numberValue)
+            ]
 
-            // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-            // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-            // APPENDED TO IT. 
-            secondViewComponents.forEach(component => {
+            if (!checkList.includes(false)) {
 
-            setTimeout(() => {
+                // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
 
-                $(component).removeClass('show');
-                $(component).addClass('hide');
+                let timeout2 = 0;
 
-            }, timeout2)
-
-            // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-            // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-            timeout2 += 100;
-
-            });
-
-            // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-            // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-            // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-            setTimeout(() => {
-
-                $(secondStage).addClass('hidden');
-    
+                // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
+                // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
+                // APPENDED TO IT. 
                 secondViewComponents.forEach(component => {
-    
-                    $(component).removeClass('hide');
-                    $(component).addClass('invisible');
-    
-                })
 
-            }, timeout2 + 250)
+                setTimeout(() => {
 
-            setTimeout(() => {
+                    $(component).removeClass('show');
+                    $(component).addClass('hide');
 
-                // THE TIMEOUT VARIABLE IS RESET TO 0
-                timeout2 = 0;
-    
-                // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                $(header).html(`${Headers.third}`)
+                }, timeout2)
+
+                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                timeout2 += 100;
+
+                });
+
+                // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
+                // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
+                // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
+                setTimeout(() => {
+
+                    $(secondStage).addClass('hidden');
+        
+                    secondViewComponents.forEach(component => {
+        
+                        $(component).removeClass('hide');
+                        $(component).addClass('invisible');
+        
+                    })
+
+                }, timeout2 + 250)
+
+                setTimeout(() => {
+
+                    // THE TIMEOUT VARIABLE IS RESET TO 0
+                    timeout2 = 0;
+        
+                    // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
+                    $(header).html(`${Headers.third}`)
+                    
+                    $(thirdStage).removeClass('hidden');
+        
+                    thirdViewComponents.forEach(component => {
+        
+                        setTimeout(() => {
+        
+                        $(component).addClass('show');
+        
+                        }, timeout2)
+        
+                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
+                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
+                        timeout2 += 100;
+        
+                    })
+
+                }, timeout2 + 200)
+
+                currentView = 'third';
+                dispatch(setProgress(3))
                 
-                $(thirdStage).removeClass('hidden');
-    
-                thirdViewComponents.forEach(component => {
-    
-                    setTimeout(() => {
-    
-                    $(component).addClass('show');
-    
-                    }, timeout2)
-    
-                    // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                    // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                    timeout2 += 100;
-    
-                })
+            }    
 
-            }, timeout2 + 200)
-
-            currentView = 'third';
-            dispatch(setProgress(3))
-
-          }
+        }
       
         const moveBackSecond = () => {
 
@@ -335,9 +379,9 @@ export default function SecondStage(props) {
     
         $(backBtn).on('click', moveBackSecond);
     
-        $(forthBtn).on('click', moveOnSecond);
+        $(forthBtn).off('click', moveOnSecond).on('click', moveOnSecond);
     
-    })
+    }, [secondStageState])
 
   return (
     <>
@@ -346,9 +390,9 @@ export default function SecondStage(props) {
         
             <TopPart id='top-part' className='invisible'>O Vás</TopPart>
             
-            <TextInput type="text" defaultValue="Meno" placeholder="Zadajte Vaše meno" parentId="parent-name" inputId="input-name" placeholderId='input-name-placeholder' className="text-input" parentClass="invisible" name="name"/>
-            <TextInput type="text" defaultValue="Priezvisko" placeholder="Zadajte Vaše priezvisko" parentId="parent-surname" inputId="input-surname" placeholderId='input-surname-placeholder' className="text-input" parentClass="invisible" name="surname"/>
-            <TextInput type="email" defaultValue="Email" placeholder="Zadajte Váš e-mail" parentId="parent-email" inputId="input-email" placeholderId='input-email-placeholder' className="text-input" parentClass="invisible" name="email"/>
+            <TextInput type="text" onChange={handleChange} defaultValue="Meno" placeholder="Zadajte Vaše meno" parentId="parent-name" inputId="input-name" placeholderId='input-name-placeholder' className="text-input" parentClass="invisible" name="name"/>
+            <TextInput type="text" onChange={handleChange} defaultValue="Priezvisko" placeholder="Zadajte Vaše priezvisko" parentId="parent-surname" inputId="input-surname" placeholderId='input-surname-placeholder' className="text-input" parentClass="invisible" name="surname"/>
+            <TextInput type="email" onChange={handleChange} defaultValue="Email" placeholder="Zadajte Váš e-mail" parentId="parent-email" inputId="input-email" placeholderId='input-email-placeholder' className="text-input" parentClass="invisible" name="email"/>
 
             <PhoneNumberInput parentClass="invisible" />
 
@@ -356,7 +400,7 @@ export default function SecondStage(props) {
 
               <Button text='Späť' class='back' id='back-btn-second' />
 
-              <Button text='Pokračovať' class={`forth ${typeOfHelp !== '' && shelter !== '' && amount !== '' ? 'active' : ''}`} id='forth-btn-second' />
+              <Button text='Pokračovať' class={`forth ${name !== '' && surname !== '' && email !== '' && number !== '' ? 'active' : ''}`} id='forth-btn-second' />
 
             </ButtonsParent>
 

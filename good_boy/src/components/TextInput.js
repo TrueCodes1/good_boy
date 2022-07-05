@@ -1,5 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+
+// IMPORTING REDUX ACTIONS
+import { updateSeconsStageHelper } from '../actions/SecondStage';
 
 // IMPORT STYLESHEETS
 import '../styles/classes.sass';
@@ -76,10 +80,56 @@ const Placeholder = styled.p`
 `
 
 export default function TextInput(props) {
+
+    const name = useSelector(state => state.secondStage.name);
+    const surname = useSelector(state => state.secondStage.surname);
+    const email = useSelector(state => state.secondStage.email);
+    const number = useSelector(state => state.secondStage.number);
+
+    const handleChange = (e) => {
+
+        let id = e.target.id;
+        let value = e.target.value;
+
+        let isReady = false;
+
+        switch (id) {
+            case 'input-name':
+                if (value!=='' && surname!=='' && email!=='' && number!=='') {
+
+                    isReady = true;
+
+                }
+                dispatch(updateSeconsStageHelper(value, surname, email, number, isReady))
+                break
+            case 'input-surname':
+                if (name!=='' && value!=='' && email!=='' && number!=='') {
+               
+                    isReady = true;
+                    
+                }
+                dispatch(updateSeconsStageHelper(name, value, email, number, isReady))
+                break
+            case 'input-email':
+                if (name!=='' && surname!=='' && value!=='' && number!=='') {
+                 
+                    isReady = true;
+
+                }
+                dispatch(updateSeconsStageHelper(name, surname, value, number, isReady))
+                break
+            default:
+                break
+        }
+
+    }
+
+    const dispatch = useDispatch()
+
   return (
     <MainParent id={props.parentId} className={props.parentClass}>
 
-        <Input type={props.type} id={props.inputId} name={props.name} className={props.className} placeholder={props.placeholder} />
+        <Input type={props.type} id={props.inputId} name={props.name} className={props.className} placeholder={props.placeholder} onChange={ handleChange } />
 
         <Placeholder id={props.placeholderId} className={props.className}>{props.defaultValue}</Placeholder>
 

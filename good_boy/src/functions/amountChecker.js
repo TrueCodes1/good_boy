@@ -1,6 +1,6 @@
 export const checker = (amount) => {
 
-    let numbers = '0123456789.';
+    let numbers = '0123456789.,';
     let validated = '';
 
     for (let i = 0; i < amount.length; i++) {
@@ -8,6 +8,8 @@ export const checker = (amount) => {
         numbers.includes(amount[i]) ? validated+=amount[i] : console.clear()
 
     }
+    
+    validated = validated.replaceAll(',', '.');
 
     while (validated.length > 1 && validated[0] === '0' && validated[1] !== '.') {
 

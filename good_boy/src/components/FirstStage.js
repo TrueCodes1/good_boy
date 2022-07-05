@@ -218,7 +218,7 @@ export default function FirstStage(props) {
         let buttonsSecond = $(`#buttons-second-stage`);
         secondViewComponents.push(buttonsSecond);
         
-        // SECOND VIEW COMPONENTS
+        // THIRD VIEW COMPONENTS
     
         let thirdViewComponents = [header];
     
@@ -251,7 +251,7 @@ export default function FirstStage(props) {
 
         const moveOnFirst = () => {
 
-            if (typeOfHelp !== '' && shelter !== '' && amount !== '') {
+            if ((typeOfHelp === 'specific_shelter' && shelter !== '' && amount !== '') || (typeOfHelp === 'whole_organisation' && amount !== '')) {
 
                 // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
         
@@ -440,7 +440,7 @@ export default function FirstStage(props) {
 
                         <UpperPartTopMainText>O projekte</UpperPartTopMainText>
 
-                        <UpperPartTopSideText>Nepovinné</UpperPartTopSideText>
+                        <UpperPartTopSideText>{` ${ typeOfHelp === 'specific_shelter' ? 'Povinné' : 'Nepovinné' } `}</UpperPartTopSideText>
 
                     </UpperPartTop>
 
@@ -466,7 +466,12 @@ export default function FirstStage(props) {
 
               <Button text='Späť' class='back hidden' id='back-btn-first' />
 
-              <Button text='Pokračovať' class={`forth ${typeOfHelp !== '' && shelter !== '' && amount !== '' ? 'active' : ''}`} id='forth-btn-first' />
+              <Button text='Pokračovať' class={`forth ${
+                    (typeOfHelp === 'specific_shelter' && shelter !== '' && amount !== '') 
+                    || 
+                    (typeOfHelp === 'whole_organisation' && amount !== '') 
+                    ? 'active' : ''
+                }`} id='forth-btn-first' />
 
             </ButtonsParent>
 

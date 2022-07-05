@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
 import { moveForth, moveBackward, setProgress } from '../actions/Progress';
+import { updateThirdStageHelper } from '../actions/ThirdStage';
 
 // IMPORTING COMPONENTS
 import RecapElement from './RecapElement';
@@ -19,6 +20,9 @@ import '../styles/animations.sass';
 
 // IMPORTING JSONS
 import Headers from '../jsons/headers.json';
+
+// IMPORTING FUNCTIONS
+import { validateAllInputs } from '../functions/validation.js';
 
 const MainParent = styled.div`
 
@@ -111,9 +115,31 @@ export default function ThirdStage(props) {
 
     const progress = useSelector(state => state.progress);
 
-    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
+    // FIRST STAGE REDUX STATES
+    const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp);
     const shelter = useSelector(state => state.firstStage.shelter);
     const amount = useSelector(state => state.firstStage.amount);
+
+    // SECOND STAGE REDUX STATES
+    const name = useSelector(state => state.secondStage.name);
+    const surname = useSelector(state => state.secondStage.surname);
+    const email = useSelector(state => state.secondStage.email);
+    const number = useSelector(state => state.secondStage.number);
+
+    // THIRD STAGE REDUX STATES
+    const agreement = useSelector(state => state.thirdStage.agreement);
+
+    // FUNCTIONS THAT SENDS THE STAGES WITH ITS DATA TO EXTERNAL VALIDATION
+    // FUNCTION AND IN CASE WHEN ALL THE DATA IS VALIDATED, MAKES THE POST
+    // REQUEST TO THE FINAL ENDPOINT
+    const checkAndGo = () => {
+
+        let firstStage = {typeOfHelp, shelter, amount};
+        let thirdStage = {agreement};
+
+        let generalValidation = validateAllInputs(firstStage, thirdStage);
+
+    }
 
     const dispatch = useDispatch();
 
@@ -286,7 +312,7 @@ export default function ThirdStage(props) {
     
         $(backBtnThird).on('click', moveBackThird);
     
-        $(forthBtn).on('click', moveOnThird);
+        // $(forthBtn).off('click', moveOnThird).on('click', moveOnThird);
     
     })
 
@@ -295,16 +321,30 @@ export default function ThirdStage(props) {
     
         <MainParent id='third-stage' className={props.parentClass}>
 
-            <RecapElement parentId="recap-1" parentClass="invisible" heading="Akou formou chcem pomôcť" info="Chcem finančne prispieť celej nadácii" />
-            <RecapElement parentId="recap-2" parentClass="invisible" heading="Najviac mi záleží na útulku" info="Mestský útulok, Žilina" />
-            <RecapElement parentId="recap-3" parentClass="invisible" heading="Suma ktorou chcem pomôcť" info="50 €" />
-            <RecapElement parentId="recap-4" parentClass="invisible" heading="Meno a priezvisko" info="Norbert Sviatko" />
-            <RecapElement parentId="recap-5" parentClass="invisible" heading="E-mailová adresa" info="truecodes.dev@gmail.com" />
-            <RecapElement parentId="recap-6" parentClass="invisible" heading="Telefónne číslo" info="+421 907 337 618" />
+            <RecapElement parentId="recap-1" parentClass="invisible" heading="Akou formou chcem pomôcť" info={`${ typeOfHelp === 'specific_shelter' ? 'Chcem finančne prispieť danému útulku' : 'Chcem finančne prispieť celej nadácii'}`} />
+            <RecapElement parentId="recap-2" parentClass="invisible" heading="Najviac mi záleží na útulku" info={ shelter } />
+            <RecapElement parentId="recap-3" parentClass="invisible" heading="Suma ktorou chcem pomôcť" info={`${ amount } €`} />
+            <RecapElement parentId="recap-4" parentClass="invisible" heading="Meno a priezvisko" info={`${ name } ${ surname }`} />
+            <RecapElement parentId="recap-5" parentClass="invisible" heading="E-mailová adresa" info={ email } />
+            <RecapElement parentId="recap-6" parentClass="invisible" heading="Telefónne číslo" info={ number } />
 
             <CheckboxParent id='parent-checkbox' className="invisible">
 
-                <CheckboxInput id="checkbox-input"  onClick={ () => { $(`#checkbox-tick`).hasClass('checked') ? $(`#checkbox-tick`).removeClass('checked') : $(`#checkbox-tick`).addClass('checked') } }>
+                <CheckboxInput id="checkbox-input"  onClick={ () => { 
+
+                        if ($(`#checkbox-tick`).hasClass('checked')) {
+                        
+                            $(`#checkbox-tick`).removeClass('checked');
+                            dispatch(updateThirdStageHelper(false));
+                        
+                        } else { 
+                        
+                            $(`#checkbox-tick`).addClass('checked');
+                            dispatch(updateThirdStageHelper(true));
+                        
+                        } 
+
+                    } }>
 
                     <TickImg src={tick} id="checkbox-tick" />
 
@@ -318,7 +358,15 @@ export default function ThirdStage(props) {
 
               <Button text='Späť' class='back' id='back-btn-third' />
 
-              <Button text='Pokračovať' class={`forth ${typeOfHelp !== '' && shelter !== '' && amount !== '' ? 'active' : ''}`} id='forth-btn-third' />
+              <Button text='Pokračovať' class={`forth ${
+                typeOfHelp !== '' && 
+                shelter !== '' && 
+                amount !== '' && 
+                name !== '' && 
+                surname !== '' && 
+                email !== '' && 
+                number !== '' ? 'active' : ''
+                }`} id='forth-btn-third' onClick={ checkAndGo } />
 
             </ButtonsParent>
 
