@@ -7,6 +7,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchShelters } from '../actions/Shelters';
 import { moveForth, moveBackward, setProgress } from '../actions/Progress';
 
+// IMPORTING FUNCTIONS
+import { checker } from '../functions/amountChecker';
+
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass';
 import '../styles/classes.sass';

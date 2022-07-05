@@ -6,6 +6,9 @@ import { useSelector, useDispatch } from 'react-redux';
 // IMPORTING REDUX ACTIONS
 import { updateFirstStageHelper } from '../actions/FirstStage';
 
+// IMPORTING FUNCTIONS
+import { checker } from '../functions/amountChecker';
+
 // IMPORTING STYLESHEETS
 import '../styles/classes.sass';
 import '../styles/animations.sass';
@@ -105,8 +108,6 @@ const OwnChoiceInput = styled.input`
 
 `
 
-
-
 export default function ChoiceMoney() {
     
     const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
@@ -130,7 +131,19 @@ export default function ChoiceMoney() {
 
         let value = e.target.value;
 
-        dispatch(updateFirstStageHelper(typeOfHelp, shelter, value))
+        let checked = checker(value);
+
+        e.target.value = checked.validated;
+
+        if (checked.isOfSomeValue === true) {
+
+            dispatch(updateFirstStageHelper(typeOfHelp, shelter, value))
+
+        } else {
+
+            dispatch(updateFirstStageHelper(typeOfHelp, shelter, ''))
+
+        }
 
     }
 
