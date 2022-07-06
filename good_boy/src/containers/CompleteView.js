@@ -1,16 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import $ from 'jquery';
-import { useDispatch } from 'react-redux';
-
-// IMPORTING REDUX ACTIONS
-import { moveForth, moveBackward } from '../actions/Progress';
 
 // IMPORTING COMPONENTS
 import Footer from '../components/Footer';
 import Progress from '../components/Progress';
 import Header from '../components/Header';
-import Button from '../components/Button';
 
 import FirstStage from '../components/FirstStage';
 import SecondStage from '../components/SecondStage';
@@ -85,22 +79,6 @@ const ImageHalf = styled.div`
 const DogImage = styled.img`
 
   background: url(brady-rogers-yMnB_WhMtY0-unsplash.jpg), url(20200824_170332000_iOS.jpg);
-
-`
-
-const ButtonsParent = styled.div`
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-
-  &.single {
-
-    justify-content: flex-end;
-
-  }
 
 `
 

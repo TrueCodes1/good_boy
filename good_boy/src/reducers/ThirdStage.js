@@ -1,6 +1,7 @@
 const thirdStageReducer = (state = {
     
-    agreement: false
+    agreement: false,
+    isReady: false
 
 }, action) => {
 
@@ -9,7 +10,10 @@ const thirdStageReducer = (state = {
         case 'UPDATE_THIRD_STAGE':
 
             return {
-                agreement: action.payload.agreement
+            
+                agreement: action.payload.agreement,
+                isReady: action.payload.isReady
+
             }
 
         default:

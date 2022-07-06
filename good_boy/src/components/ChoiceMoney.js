@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
 import { updateFirstStageHelper } from '../actions/FirstStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORTING FUNCTIONS
 import { checker } from '../functions/amountChecker';
@@ -110,23 +111,41 @@ const OwnChoiceInput = styled.input`
 
 export default function ChoiceMoney() {
     
+    // FIRST STAGE REDUX STATES
     const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
     const shelter = useSelector(state => state.firstStage.shelter);
-    const amount = useSelector(state => state.firstStage.amount);
+    const shelterID = useSelector(state => state.firstStage.shelterID);
 
+    // REDUX STATES OF THE SECOND AND THE THIRD STAGE WHICH TELL WHETHER THE SPECIFIC
+    // STAGE IS READY TO BE PROCESSED
+    const secondStageIsReady = useSelector(state => state.secondStage.isReady);
+    const thirdStageIsReady = useSelector(state => state.thirdStage.isReady);
+
+    // REDUX FUNCTION USED WHEN UPDATING ANY STATE OF THE APP
     const dispatch = useDispatch();
-    // const [shelter, setShelter] = useState('');
 
+    // FUNCTION HANDLING EVENT WHEN THE AMOUNT OF MONEY IS CHOSEN
+    // FROM PREPARED CHOICES
     const handleChange = (e) => {
 
         let value = e.target.id;
-
         value = value.substring(0, value.indexOf('-'))
 
-        dispatch(updateFirstStageHelper(typeOfHelp, shelter, value))
+        let isReady = false;
+        (typeOfHelp === 'specific_shelter' && shelter !== '' && shelterID !== '' && value !== '') || (typeOfHelp === 'whole_organisation' && value !== '') ? isReady = true : isReady = false;
+
+        dispatch(updateFirstStageHelper(typeOfHelp, shelter, shelterID, value, isReady))
+
+        let isAllReady = false;
+
+        (isReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+
+        dispatch(updateGeneralStateHelper(isAllReady))
 
     }
     
+    // FUNCTION HANDLING EVENT WHEN THE AMOUNT OF MONEY IS CHOSEN
+    // INDIVIDUALLY IN THE INPUT FIELD
     const handleChangeInput = (e) => {
 
         let value = e.target.value;
@@ -137,11 +156,22 @@ export default function ChoiceMoney() {
 
         if (checked.isOfSomeValue === true) {
 
-            dispatch(updateFirstStageHelper(typeOfHelp, shelter, value))
+            let isReady = false;
+            (typeOfHelp === 'specific_shelter' && shelter !== '' && shelterID !== '' && checked.validated !== '') || (typeOfHelp === 'whole_organisation' && checked.validated !== '') ? isReady = true : isReady = false;
+    
+            dispatch(updateFirstStageHelper(typeOfHelp, shelter, shelterID, checked.validated, isReady))
+
+            let isAllReady = false;
+
+            (isReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+    
+            dispatch(updateGeneralStateHelper(isAllReady))
 
         } else {
 
-            dispatch(updateFirstStageHelper(typeOfHelp, shelter, ''))
+            dispatch(updateFirstStageHelper(typeOfHelp, shelter, shelterID, '', false))
+            
+            dispatch(updateGeneralStateHelper(false))
 
         }
 

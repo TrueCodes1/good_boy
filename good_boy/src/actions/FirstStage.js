@@ -1,21 +1,23 @@
-const updateFirstStage = (typeOfHelp, shelterChoice, amount) => {
+const updateFirstStage = (typeOfHelp, shelterChoice, shelterID, amount, isReady) => {
     
     return {
         type: 'UPDATE_FIRST_STAGE',
         payload: { 
             typeOfHelp,
             shelterChoice,
-            amount
+            shelterID,
+            amount,
+            isReady
         }
     }
 
 }
 
-const updateFirstStageHelper = (typeOfHelp, shelterChoice, amount) => {
+const updateFirstStageHelper = (typeOfHelp, shelterChoice, shelterID, amount, isReady) => {
 
     return dispatch => {
 
-        dispatch(updateFirstStage(typeOfHelp, shelterChoice, amount))
+        dispatch(updateFirstStage(typeOfHelp, shelterChoice, shelterID, amount, isReady))
 
     }
 

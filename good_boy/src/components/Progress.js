@@ -1,6 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import $ from 'jquery';
+import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import $ from 'jquery';
 
 // IMPORTING ASSETS
 import walletIcon from '../assets/wallet_icon.svg';
@@ -9,6 +8,7 @@ import pawIcon from '../assets/paw_icon.svg';
 
 // IMPORTING REDUX ACTIONS
 import { updateFirstStageHelper } from '../actions/FirstStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass';
@@ -94,19 +94,48 @@ const ChoiceText = styled.p`
 
 export default function DoubleChoice() {
 
+    // FIRST STAGE REDUX STATES
     const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp);
     const shelter = useSelector(state => state.firstStage.shelter);
+    const shelterID = useSelector(state => state.firstStage.shelterID);
     const amount = useSelector(state => state.firstStage.amount);
 
-    const dispatch = useDispatch();
-    // const [shelter, setShelter] = useState('');
+    // REDUX STATES TELLING WHETHER THE SECOND AND THE THIRD STAGES ARE READY
+    // TO BE PROCESSED
+    const secondStageIsReady = useSelector(state => state.secondStage.isReady);
+    const thirdStageIsReady = useSelector(state => state.thirdStage.isReady);
 
+    // REDUX FUNCTION USED WHEN UPDATING ANY STATE OF THE APP
+    const dispatch = useDispatch();
+
+    // FUNCTION CALLED WHEN CHOOSING THE LEFT OPTION FROM THE TOP DOUBLE CHOICE
     const setLeft = () => {
-        dispatch(updateFirstStageHelper('specific_shelter', shelter, amount))
+
+        let isReady = false;
+        (typeOfHelp !== '' && shelter !== '' && shelterID !== '' && amount !== '') ? isReady = true : isReady = false;
+
+        dispatch(updateFirstStageHelper('specific_shelter', shelter, shelterID, amount, isReady))
+
+        let isAllReady = false;
+
+        (isReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+
+        dispatch(updateGeneralStateHelper(isAllReady))
     }
 
+    // FUCNTION CALLED WHEN CHOOSING THE RIGHT OPTION FROM THE TOP DOBLE CHOICE
     const setRight = () => {
-        dispatch(updateFirstStageHelper('whole_organisation', shelter, amount))
+
+        let isReady = false;
+        (typeOfHelp !== '' && amount !== '') ? isReady = true : isReady = false;
+
+        dispatch(updateFirstStageHelper('whole_organisation', shelter, shelterID, amount, isReady))
+
+        let isAllReady = false;
+
+        (isReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+
+        dispatch(updateGeneralStateHelper(isAllReady))
     }
 
   return (

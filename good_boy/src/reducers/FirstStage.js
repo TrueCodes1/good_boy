@@ -2,7 +2,9 @@ const firstStageReducer = (state = {
     
     typeOfHelp: 'specific_shelter',
     shelter: '',
-    amount: ''
+    shelterID: '',
+    amount: '',
+    isReady: false
 
 }, action) => {
 
@@ -13,7 +15,9 @@ const firstStageReducer = (state = {
             return {
                 typeOfHelp: action.payload.typeOfHelp,
                 shelter: action.payload.shelterChoice,
-                amount: action.payload.amount
+                shelterID: action.payload.shelterID,
+                amount: action.payload.amount,
+                isReady: action.payload.isReady
             }
 
         default:

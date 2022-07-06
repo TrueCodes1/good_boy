@@ -4,10 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
 import { updateSeconsStageHelper } from '../actions/SecondStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORT STYLESHEETS
 import '../styles/classes.sass';
 import '../styles/animations.sass';
+
+// IMPORTING FUNCTIONS
+import { realtimeValidate } from '../functions/realtimeValidation/inputIsCorrect';
 
 const MainParent = styled.div`
 
@@ -59,6 +63,14 @@ const Input = styled.input`
         opacity: 1
     } */
 
+    &.wrong {
+
+        border: none;
+        box-shadow: 5px 5px 10px 3px #E6B9B3,
+                    -5px -5px 10px 3px #E6B9B3;
+
+    }
+
 `
 
 const Placeholder = styled.p`
@@ -81,46 +93,73 @@ const Placeholder = styled.p`
 
 export default function TextInput(props) {
 
+    // SECOND STAGE REDUX STATES
     const name = useSelector(state => state.secondStage.name);
+    const nameInputIsCorrect = useSelector(state => state.secondStage.nameInputIsCorrect);
     const surname = useSelector(state => state.secondStage.surname);
+    const surnameInputIsCorrect = useSelector(state => state.secondStage.surnameInputIsCorrect);
     const email = useSelector(state => state.secondStage.email);
+    const emailInputIsCorrect = useSelector(state => state.secondStage.emailInputIsCorrect);
     const number = useSelector(state => state.secondStage.number);
+    const numberInputIsCorrect = useSelector(state => state.secondStage.numberInputIsCorrect);
+
+    const firstStageIsReady = useSelector(state => state.firstStage.isReady);
+    const thirdStageIsReady = useSelector(state => state.thirdStage.isReady);
 
     const handleChange = (e) => {
 
         let id = e.target.id;
         let value = e.target.value;
 
+        let isCorrect = realtimeValidate(id, value);
+
         let isReady = false;
 
         switch (id) {
             case 'input-name':
-                if (value!=='' && surname!=='' && email!=='' && number!=='') {
 
-                    isReady = true;
+                (typeof isCorrect === 'object') ? e.target.value = isCorrect['value'] : console.log();
 
+                (isCorrect === true && surnameInputIsCorrect === true && emailInputIsCorrect === true && numberInputIsCorrect === true) ? isReady = true : isReady = false;
+
+                if (value === '') {
+
+                    value = '-'   
+                
                 }
-                dispatch(updateSeconsStageHelper(value, surname, email, number, isReady))
+
+                dispatch(updateSeconsStageHelper(value, isCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, number, numberInputIsCorrect, isReady))
+                
                 break
+            
             case 'input-surname':
-                if (name!=='' && value!=='' && email!=='' && number!=='') {
-               
-                    isReady = true;
-                    
-                }
-                dispatch(updateSeconsStageHelper(name, value, email, number, isReady))
-                break
-            case 'input-email':
-                if (name!=='' && surname!=='' && value!=='' && number!=='') {
-                 
-                    isReady = true;
 
-                }
-                dispatch(updateSeconsStageHelper(name, surname, value, number, isReady))
+                (typeof isCorrect === 'object') ? e.target.value = isCorrect['value'] : console.log() ;
+
+                (nameInputIsCorrect === true && isCorrect === true && emailInputIsCorrect === true && numberInputIsCorrect === true) ? isReady = true : isReady = false;
+                
+                dispatch(updateSeconsStageHelper(name, nameInputIsCorrect, value, isCorrect, email, emailInputIsCorrect, number, numberInputIsCorrect, isReady))
+        
                 break
+            
+            case 'input-email':
+                
+                (nameInputIsCorrect === true && surnameInputIsCorrect === true && isCorrect === true && numberInputIsCorrect === true) ? isReady = true : isReady = false;
+
+                dispatch(updateSeconsStageHelper(name, nameInputIsCorrect, surname, surnameInputIsCorrect, value, isCorrect, number, numberInputIsCorrect, isReady))
+                
+                break
+            
             default:
+            
                 break
         }
+
+        let isAllReady = false;
+
+        (firstStageIsReady === true && isReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+
+        dispatch(updateGeneralStateHelper(isAllReady));
 
     }
 
@@ -129,7 +168,7 @@ export default function TextInput(props) {
   return (
     <MainParent id={props.parentId} className={props.parentClass}>
 
-        <Input type={props.type} id={props.inputId} name={props.name} className={props.className} placeholder={props.placeholder} onChange={ handleChange } />
+        <Input type={props.type} id={props.inputId} name={props.name} className={props.className} placeholder={props.placeholder} minLength={props.minLength} maxLength={props.maxLength} onChange={ handleChange } />
 
         <Placeholder id={props.placeholderId} className={props.className}>{props.defaultValue}</Placeholder>
 

@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import $ from 'jquery';
+import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
-import { moveForth, moveBackward, setProgress } from '../actions/Progress';
+import { setProgress } from '../actions/Progress';
 import { updateThirdStageHelper } from '../actions/ThirdStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORTING COMPONENTS
 import RecapElement from './RecapElement';
@@ -18,11 +20,8 @@ import tick from '../assets/tick.svg';
 import '../styles/classes.sass';
 import '../styles/animations.sass';
 
-// IMPORTING JSONS
-import Headers from '../jsons/headers.json';
-
 // IMPORTING FUNCTIONS
-import { validateAllInputs } from '../functions/validation.js';
+import { move } from '../functions/transitions/move';
 
 const MainParent = styled.div`
 
@@ -113,208 +112,108 @@ const ButtonsParent = styled.div`
 
 export default function ThirdStage(props) {
 
-    const progress = useSelector(state => state.progress);
-
     // FIRST STAGE REDUX STATES
     const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp);
     const shelter = useSelector(state => state.firstStage.shelter);
+    const shelterID = useSelector(state => state.firstStage.shelterID);
     const amount = useSelector(state => state.firstStage.amount);
+    const firstStageIsReady = useSelector(state => state.firstStage.isReady);
 
     // SECOND STAGE REDUX STATES
     const name = useSelector(state => state.secondStage.name);
     const surname = useSelector(state => state.secondStage.surname);
     const email = useSelector(state => state.secondStage.email);
     const number = useSelector(state => state.secondStage.number);
+    const secondStageIsReady = useSelector(state => state.secondStage.isReady);
 
-    // THIRD STAGE REDUX STATES
-    const agreement = useSelector(state => state.thirdStage.agreement);
+    // GENERAL STATE OF ALL THE STAGES TOGETHER
+    const allIsReady = useSelector(state => state.generalState.allIsReady);
+
+    const dispatch = useDispatch();
 
     // FUNCTIONS THAT SENDS THE STAGES WITH ITS DATA TO EXTERNAL VALIDATION
     // FUNCTION AND IN CASE WHEN ALL THE DATA IS VALIDATED, MAKES THE POST
     // REQUEST TO THE FINAL ENDPOINT
     const checkAndGo = () => {
 
-        let firstStage = {typeOfHelp, shelter, amount};
-        let thirdStage = {agreement};
+        if (allIsReady === true) {
 
-        let generalValidation = validateAllInputs(firstStage, thirdStage);
+            let body = {
+                            
+                "firstName": name,
+                "lastName": surname,
+                "email": email,
+                "phone": number,
+                "value": amount,
+                "shelterID": shelterID
+
+            }
+
+            axios.post('https://frontend-assignment-api.goodrequest.dev/api/v1/shelters/contribute', body)
+            .then(res => {
+
+                console.log(res)
+
+                res = res.data.messages[0];
+                let type = res.type;
+                let message = res.message;
+
+                if (type === 'SUCCESS') {
+
+                    alert(message);
+
+                    // IN CASE THE REQUEST WAS SUCCESSFUL WITH STATUS 200 WE ARE
+                    // RETURNING THE USER BACK TO THE BEGINNING WITH THE WHOLE REDUX STATE RESET
+                    window.location.reload()
+
+                } 
+
+            })
+            .catch((err) => {
+
+                console.log(err)
+
+                // IN CASE OF BAD REQUEST, THE USER IS SHOWN MESSAGE ABOUT THE NON-EXISTING SHELTER
+                alert(err.response.data.messages[0].message)
+
+            })
+
+        }
 
     }
 
-    const dispatch = useDispatch();
+    // MOVING BACK TO THE SECOND STAGE
+    const moveBack = () => {
 
-    useEffect(() => {
-        
-        const firstStage = $(`#first-stage`);
+        const header = $(`#header`);
+
         const secondStage = $(`#second-stage`);
         const thirdStage = $(`#third-stage`);
-    
-        const header = $(`#header`);
-    
-        const backBtnThird = $(`#back-btn-third`);
-        const forthBtn = $(`#forth-btn-third`);
-    
-        let currentView = 'first';
-    
-        // FIRST VIEW COMPONENTS
-        
-        let firstViewComponents = [header];
-    
-        let doubleChoice = $(`#double-choice`);
-        firstViewComponents.push(doubleChoice);
-    
-        let formUpperPart = $(`#form-upper-part`);
-        firstViewComponents.push(formUpperPart);
-        
-        let formLowerPart = $(`#form-lower-part`);
-        firstViewComponents.push(formLowerPart);
 
-        let buttonsFirst = $(`#buttons-first-stage`);
-        firstViewComponents.push(buttonsFirst);
-    
         // SECOND VIEW COMPONENTS
-    
-        let secondViewComponents = [header];
-    
         let topPart = $(`#top-part`);
-        secondViewComponents.push(topPart);
-    
         let nameParent = $(`#parent-name`);
-        secondViewComponents.push(nameParent);
-    
         let surnameParent = $(`#parent-surname`);
-        secondViewComponents.push(surnameParent);
-        
         let emailParent = $(`#parent-email`);
-        secondViewComponents.push(emailParent);
-        
         let parentPhoneInput = $(`#parent-phone-number`);
-        secondViewComponents.push(parentPhoneInput);
-        
         let buttonsSecond = $(`#buttons-second-stage`);
-        secondViewComponents.push(buttonsSecond);
+        let secondViewComponents = [header, topPart, nameParent, surnameParent, emailParent, parentPhoneInput, buttonsSecond];
         
-        // SECOND VIEW COMPONENTS
-    
-        let thirdViewComponents = [header];
-    
+        // THIRD VIEW COMPONENTS
         let recap1 = $(`#recap-1`);
-        thirdViewComponents.push(recap1);
-    
         let recap2 = $(`#recap-2`);
-        thirdViewComponents.push(recap2);
-    
         let recap3 = $(`#recap-3`);
-        thirdViewComponents.push(recap3);
-        
         let recap4 = $(`#recap-4`);
-        thirdViewComponents.push(recap4);
-        
         let recap5 = $(`#recap-5`);
-        thirdViewComponents.push(recap5);
-        
         let recap6 = $(`#recap-6`);
-        thirdViewComponents.push(recap6);
-      
         let parentCheckbox = $(`#parent-checkbox`);
-        thirdViewComponents.push(parentCheckbox);
-    
         let buttonsThird = $(`#buttons-third-stage`);
-        thirdViewComponents.push(buttonsThird);
+        let thirdViewComponents = [header, recap1, recap2, recap3, recap4, recap5, recap6, parentCheckbox, buttonsThird];
 
-        /********************************* */
-        //
-        //           FUNCTIONS
-        //
-        /********************************* */
-    
-        const moveOnThird = () => {
+        move('back', 'third', thirdViewComponents, secondViewComponents, thirdStage, secondStage);
+        dispatch(setProgress(2));
 
-            alert('Checking and sending')
-
-        }
-      
-        const moveBackThird = () => {
-
-            // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-    
-            let timeout2 = 0;
-    
-            // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-            // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-            // APPENDED TO IT. 
-            thirdViewComponents.forEach(component => {
-    
-                setTimeout(() => {
-    
-                    $(component).removeClass('show');
-                    $(component).addClass('hide');
-    
-                }, timeout2)
-    
-                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                timeout2 += 100;
-    
-            });
-    
-            // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-            // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-            // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-            setTimeout(() => {
-    
-                thirdViewComponents.forEach(component => {
-    
-                $(component).removeClass('hide');
-    
-                })
-    
-                $(thirdStage).addClass('hidden');
-    
-            }, timeout2 + 250)
-    
-            setTimeout(() => {
-    
-                // THE TIMEOUT VARIABLE IS RESET TO 0
-                timeout2 = 0;
-    
-                // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                $(header).html(`${Headers.second}`)
-                
-                $(secondStage).removeClass('hidden');
-    
-                secondViewComponents.forEach(component => {
-    
-                setTimeout(() => {
-    
-                    $(component).addClass('show');
-    
-                }, timeout2)
-    
-                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                timeout2 += 100;
-    
-                })
-    
-            }, timeout2 + 200)
-    
-            currentView = 'second';
-            dispatch(setProgress(2))
-            
-        }
-    
-        /********************************** */
-        //
-        //         EVENT LISTENERS
-        //
-        /********************************** */
-    
-        $(backBtnThird).on('click', moveBackThird);
-    
-        // $(forthBtn).off('click', moveOnThird).on('click', moveOnThird);
-    
-    })
+    }
 
   return (
     <>
@@ -335,13 +234,20 @@ export default function ThirdStage(props) {
                         if ($(`#checkbox-tick`).hasClass('checked')) {
                         
                             $(`#checkbox-tick`).removeClass('checked');
-                            dispatch(updateThirdStageHelper(false));
+                            dispatch(updateThirdStageHelper(false, false));
+
+                            dispatch(updateGeneralStateHelper(false));
                         
                         } else { 
                         
                             $(`#checkbox-tick`).addClass('checked');
-                            dispatch(updateThirdStageHelper(true));
+                            dispatch(updateThirdStageHelper(true, true));
                         
+                            let isReady = false;
+
+                            (firstStageIsReady === true && secondStageIsReady === true) ? isReady = true : isReady = false;
+
+                            dispatch(updateGeneralStateHelper(isReady));
                         } 
 
                     } }>
@@ -356,17 +262,9 @@ export default function ThirdStage(props) {
 
             <ButtonsParent id='buttons-third-stage' className='invisible'>
 
-              <Button text='Späť' class='back' id='back-btn-third' />
+              <Button text='Späť' class='back' id='back-btn-third' onClick={ moveBack } />
 
-              <Button text='Pokračovať' class={`forth ${
-                typeOfHelp !== '' && 
-                shelter !== '' && 
-                amount !== '' && 
-                name !== '' && 
-                surname !== '' && 
-                email !== '' && 
-                number !== '' ? 'active' : ''
-                }`} id='forth-btn-third' onClick={ checkAndGo } />
+              <Button text='Odoslať formulár' class={`forth ${ allIsReady === true ? 'active' : ''}`} id='forth-btn-third' onClick={ checkAndGo } />
 
             </ButtonsParent>
 

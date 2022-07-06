@@ -1,23 +1,27 @@
-const updateSecondStage = (name, surname, email, number, isReady) => {
+const updateSecondStage = (name, nameInputIsCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, number, numberInputIsCorrect, isReady) => {
     
     return {
         type: 'UPDATE_SECOND_STAGE',
         payload: { 
             name, 
+            nameInputIsCorrect,
             surname,
+            surnameInputIsCorrect,
             email,
+            emailInputIsCorrect,
             number,
+            numberInputIsCorrect,
             isReady
         }
     }
 
 }
 
-const updateSeconsStageHelper = (name, surname, email, number, isReady) => {
+const updateSeconsStageHelper = (name, nameInputIsCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, number, numberInputIsCorrect, isReady) => {
 
     return dispatch => {
 
-        dispatch(updateSecondStage(name, surname, email, number, isReady))
+        dispatch(updateSecondStage(name, nameInputIsCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, number, numberInputIsCorrect, isReady))
 
     }
 

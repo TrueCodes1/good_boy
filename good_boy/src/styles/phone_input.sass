@@ -1,60 +1,65 @@
 
-    *
-        box-sizing: border-box
+*
+    box-sizing: border-box
 
-    .PhoneInput
-        display: flex,
-        flex-direction: column,
-        align-items: stretch,
-        justify-content: stretch
+.PhoneInput
+    display: flex,
+    flex-direction: column,
+    align-items: stretch,
+    justify-content: stretch
 
-    .PhoneInputCountry
-        position: absolute,
-        transform: translateY(36px) translateX(27px),
-        display: flex,
-        flex-direction: column,
-        align-items: center,
-        justify-content: center,
-        min-width: 25px,
-        max-width: 25px
+.PhoneInputCountry
+    position: absolute,
+    transform: translateY(36px) translateX(27px),
+    display: flex,
+    flex-direction: column,
+    align-items: center,
+    justify-content: center,
+    min-width: 25px,
+    max-width: 25px
 
-    .PhoneInputCountryIconUnicode
-        display: flex,
-        flex-direction: column,
-        align-items: center,
-        justify-content: flex-end,
-        font-size: 25px
+.PhoneInputCountryIconUnicode
+    display: flex,
+    flex-direction: column,
+    align-items: center,
+    justify-content: flex-end,
+    font-size: 25px
 
-    .PhoneInputCountrySelect,
-    .PhoneInputCountrySelectArrow
-        display: none
-    
-    .PhoneInputCountryIcon 
-        min-width: 25px,
-        max-width: 25px,
-        transform: translateY(5px),
-        overflow: hidden
+.PhoneInputCountrySelect,
+.PhoneInputCountrySelectArrow
+    display: none
 
-    .PhoneInputInput
-        padding: 40px 15px 17px 70px,
-        font-weight: 400,
-        font-size: 16px,
-        line-height: 21px,
-        background: #FFFFFF,
+.PhoneInputCountryIcon 
+    min-width: 25px,
+    max-width: 25px,
+    transform: translateY(5px),
+    overflow: hidden
+
+.PhoneInputInput
+    padding: 40px 15px 17px 70px,
+    font-weight: 400,
+    font-size: 16px,
+    line-height: 21px,
+    background: #FFFFFF,
+    border: 1px solid #DFDFDF,
+    border-radius: 8px,
+    outline: none,
+    transition: .25s ease-in-out,
+    color: #9F9F9F,
+
+    &:hover 
         border: 1px solid #DFDFDF,
-        border-radius: 8px,
+        outline: none
+
+
+    &:focus 
+        border: 1px solid #CD8B65,
         outline: none,
         transition: .25s ease-in-out,
-        color: #9F9F9F,
+        color: #2F2F2F
 
-        &:hover 
-            border: 1px solid #DFDFDF,
-            outline: none
-        
+.wrong > #phone-input
 
-        &:focus 
-            border: 1px solid #CD8B65,
-            outline: none,
-            transition: .25s ease-in-out,
-            color: #2F2F2F
-        
+    border: none,
+    box-shadow: 5px 5px 10px 3px #E6B9B3, -5px -5px 10px 3px #E6B9B3,
+

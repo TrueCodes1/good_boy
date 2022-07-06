@@ -1,4 +1,6 @@
 @import './animations.sass'
+ 
+//  HERE ARE ALL THE COMMON CASSES SHARED BETWEEN THE COMPONENTS THROUGH THE APP
 
 .hidden
     display: none
@@ -6,11 +8,19 @@
 .invisible
     opacity: 0
 
+#buttons-first-stage,
+#buttons-second-stage,
+#buttons-third-stage
+    &.show    
+        animation: 1 .25s showAnimationButtons,
+        -webkit-animation: 1 .25s showAnimationButtons,
+        opacity: 1,
+    
 .show 
     animation: 1 .25s showAnimation, 
     -webkit-animation: 1 .25s showAnimation, 
     opacity: 1 
-    
+
 .hide 
     animation: 1 .25s leaveAnimation,
     -webkit-animation: 1 .25s leaveAnimation,

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import $ from 'jquery';
 import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
-import { fetchShelters } from '../actions/Shelters';
-import { moveForth, moveBackward, setProgress } from '../actions/Progress';
+import { setProgress } from '../actions/Progress';
 
 // IMPORTING FUNCTIONS
-import { checker } from '../functions/amountChecker';
+import { move } from '../functions/transitions/move';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass';
@@ -19,9 +18,6 @@ import DoubleChoice from './DoubleChoice';
 import SheltersList from './SheltersList';
 import ChoiceMoney from './ChoiceMoney';
 import Button from './Button';
-
-// IMPORTING JSONS
-import Headers from '../jsons/headers.json';
 
 // BUGS TO FIX:
 
@@ -46,22 +42,6 @@ const MainParent = styled.div`
     }
 
 `
-
-// const leaveAnimation = keyframes`
-
-//     0% {
-//         transform: translateX(0);
-//         opacity: 1;
-//     }
-//     80% {
-//         opacity: 0;
-//     }
-//     100% {
-//         transform: scale(1.05);
-//         opacity: 0;
-//     }
-
-// `
 
 const FormPart = styled.div`
 
@@ -159,187 +139,61 @@ const ButtonsParent = styled.div`
 
 export default function FirstStage(props) {
 
-    const progress = useSelector(state => state.progress);
-
     const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
     const shelter = useSelector(state => state.firstStage.shelter);
     const amount = useSelector(state => state.firstStage.amount);
+    const isReady = useSelector(state => state.firstStage.isReady);
 
+    // REDUX FUNCTION USED WHEN UPDATING ANY STATE OF THE APP
     const dispatch = useDispatch();
 
+    // DECLARING ALL THE NECCESSARY VARIABLES FROM THE SPECIFIC STAGES
+    const firstStage = $(`#first-stage`);
+    const secondStage = $(`#second-stage`);
+
+    const header = $(`#header`);
+    
+    // FIRST VIEW COMPONENTS
+    let doubleChoice = $(`#double-choice`);
+    let formUpperPart = $(`#form-upper-part`);
+    let formLowerPart = $(`#form-lower-part`);
+    let buttonsFirst = $(`#buttons-first-stage`);
+    let firstViewComponents = [header, doubleChoice, formUpperPart, formLowerPart, buttonsFirst];
+
+    // SECOND VIEW COMPONENTS
+    let topPart = $(`#top-part`);
+    let nameParent = $(`#parent-name`);
+    let surnameParent = $(`#parent-surname`);
+    let emailParent = $(`#parent-email`);
+    let parentPhoneInput = $(`#parent-phone-number`);
+    let buttonsSecond = $(`#buttons-second-stage`);
+    let secondViewComponents = [header, topPart, nameParent, surnameParent, emailParent, parentPhoneInput, buttonsSecond];
+
+    // MOVING ON TO THE SECOND STAGE
+    const moveOn = () => {
+    
+        if (
+            (typeOfHelp === 'specific_shelter' && shelter !== '' && amount !== '') 
+            || 
+            (typeOfHelp === 'whole_organisation' && amount !== '')
+        ){
+
+            move('forth', 'first', firstViewComponents, secondViewComponents, firstStage, secondStage);
+            dispatch(setProgress(2));
+        
+        }
+    
+    }
+
+    // ALERTING THERE IS NO PREVIOUS STAGE BEFORE THE FIRST ONE
+    const moveBack = () => {
+
+        alert('Práve sa nachádzate na prvej časti dotazníka.')
+
+    }
+
     useEffect(() => {
-
-        const firstStage = $(`#first-stage`);
-        const secondStage = $(`#second-stage`);
-        const thirdStage = $(`#third-stage`);
-    
-        const header = $(`#header`);
-    
-        const backBtn = $(`#back-btn-first`);
-        const forthBtn = $(`#forth-btn-first`);
-    
-        let currentView = 'first';
-    
-        // FIRST VIEW COMPONENTS
         
-        let firstViewComponents = [header];
-    
-        let doubleChoice = $(`#double-choice`);
-        firstViewComponents.push(doubleChoice);
-    
-        let formUpperPart = $(`#form-upper-part`);
-        firstViewComponents.push(formUpperPart);
-        
-        let formLowerPart = $(`#form-lower-part`);
-        firstViewComponents.push(formLowerPart);
-
-        let buttonsFirst = $(`#buttons-first-stage`);
-        firstViewComponents.push(buttonsFirst);
-    
-        // SECOND VIEW COMPONENTS
-    
-        let secondViewComponents = [header];
-    
-        let topPart = $(`#top-part`);
-        secondViewComponents.push(topPart);
-    
-        let nameParent = $(`#parent-name`);
-        secondViewComponents.push(nameParent);
-    
-        let surnameParent = $(`#parent-surname`);
-        secondViewComponents.push(surnameParent);
-        
-        let emailParent = $(`#parent-email`);
-        secondViewComponents.push(emailParent);
-        
-        let parentPhoneInput = $(`#parent-phone-number`);
-        secondViewComponents.push(parentPhoneInput);
-        
-        let buttonsSecond = $(`#buttons-second-stage`);
-        secondViewComponents.push(buttonsSecond);
-        
-        // THIRD VIEW COMPONENTS
-    
-        let thirdViewComponents = [header];
-    
-        let recap1 = $(`#recap-1`);
-        thirdViewComponents.push(recap1);
-    
-        let recap2 = $(`#recap-2`);
-        thirdViewComponents.push(recap2);
-    
-        let recap3 = $(`#recap-3`);
-        thirdViewComponents.push(recap3);
-        
-        let recap4 = $(`#recap-4`);
-        thirdViewComponents.push(recap4);
-        
-        let recap5 = $(`#recap-5`);
-        thirdViewComponents.push(recap5);
-        
-        let recap6 = $(`#recap-6`);
-        thirdViewComponents.push(recap6);
-      
-        let parentCheckbox = $(`#parent-checkbox`);
-        thirdViewComponents.push(parentCheckbox);
-    
-        /********************************* */
-        //
-        //           FUNCTIONS
-        //
-        /********************************* */
-
-        const moveOnFirst = () => {
-
-            if ((typeOfHelp === 'specific_shelter' && shelter !== '' && amount !== '') || (typeOfHelp === 'whole_organisation' && amount !== '')) {
-
-                // MOVING FROM THE FIRST VIEW TO THE SECOND VIEW
-        
-                let timeout = 0;
-        
-                // EACH OF THE COMPONENTS OF THE FIRST VIEW IS 
-                // ASSIGNED A TIMEOUT WHEN THERE WILL BE CLASS "HIDE"
-                // APPENDED TO IT. 
-                firstViewComponents.forEach(component => {
-
-                setTimeout(() => {
-
-                    $(component).removeClass('show');
-                    $(component).addClass('hide');
-
-                }, timeout)
-
-                // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                timeout += 100;
-
-                });
-
-                // AFTER THE LAST COMPONENTS ENDS THE ANIMATION,
-                // THE CLASS "HIDE" IS REMOVED AND THE WHOLE FIRST STAGE
-                // IS APPENDED A CLASS "HIDDEN", THAT MAKES IT DISPLAY: NONE
-                setTimeout(() => {
-
-                    $(firstStage).addClass('hidden');
-        
-                    firstViewComponents.forEach(component => {
-        
-                        $(component).removeClass('hide');
-                        $(component).addClass('invisible');
-        
-                    })
-
-                }, timeout + 250)
-
-                setTimeout(() => {
-
-                    // THE TIMEOUT VARIABLE IS RESET TO 0
-                    timeout = 0;
-        
-                    // CHANGING THE TEXT OF THE HEADER FOR THE SECOND STAGE
-                    $(header).html(`${Headers.second}`)
-                    
-                    $(secondStage).removeClass('hidden');
-        
-                    secondViewComponents.forEach(component => {
-        
-                        setTimeout(() => {
-        
-                        $(component).addClass('show');
-            
-                        }, timeout)
-            
-                        // FOR EACH OF THE COMPONENTS, THE TIME WHEN
-                        // THE CLASS WILL BE APPENDED IS PLUS 0.1 SEC. 
-                        timeout += 100;
-            
-                    })
-
-                }, timeout + 200)
-
-                currentView = 'second';
-                dispatch(setProgress(2))
-
-            }
-
-        }
-      
-        const moveBackFirst = () => {
-                
-            alert('There is nowhere else to move backward.')
-        
-        }
-    
-        /********************************** */
-        //
-        //         EVENT LISTENERS
-        //
-        /********************************** */
-    
-        $(backBtn).on('click', moveBackFirst);
-    
-        $(forthBtn).on('click', moveOnFirst);
-    
         // THE TWO CHOCIES AT THE TOP WHERE CUSTOMER DECIDES WHAT TYPE OF FINANCIAL
         // HELP THEY WANT TO OFFER
         let singleChoicesTop = document.getElementsByClassName(`single-choice-top`);
@@ -396,7 +250,6 @@ export default function FirstStage(props) {
 
         }
 
-
         // ****************************
 
         //       EVENT LISTENERS         
@@ -405,6 +258,7 @@ export default function FirstStage(props) {
 
         // EACH OF THE ELEMTENTS IN THE CHOICES IS "ON CLICK" ADDED THE
         // FUNCTION "TOGGLE ACTIVE CLASS ON TOP CHOICES"
+
         Object.values(singleChoicesTop).forEach(elem => {
 
             $(elem).on('click', toggleActiveClassOnTopChoices)
@@ -413,6 +267,7 @@ export default function FirstStage(props) {
 
         // EACH OF THE ELEMTENTS IN THE CHOICES IS "ON CLICK" ADDED THE
         // FUNCTION "TOGGLE ACTIVE CLASS"
+
         Object.values(singleChoicesMoney).forEach(elem => {
 
             $(elem).on('click', toggleActiveClassOnMoney)
@@ -421,6 +276,7 @@ export default function FirstStage(props) {
 
         // ALSO, THE "OWN CHOICE" IS "ON CLICK" ADDED THIS FUNCTION 
         // "TOGGLE ACTIVE CLASS" 
+
         $(ownChoiceMoney).on('click', toggleActiveClassOnMoney);
 
     })
@@ -464,14 +320,9 @@ export default function FirstStage(props) {
 
             <ButtonsParent id='buttons-first-stage' className='single'>
 
-              <Button text='Späť' class='back hidden' id='back-btn-first' />
+              <Button text='Späť' class='back hidden' id='back-btn-first' oncClick={ moveBack } />
 
-              <Button text='Pokračovať' class={`forth ${
-                    (typeOfHelp === 'specific_shelter' && shelter !== '' && amount !== '') 
-                    || 
-                    (typeOfHelp === 'whole_organisation' && amount !== '') 
-                    ? 'active' : ''
-                }`} id='forth-btn-first' />
+              <Button text='Pokračovať' class={`forth ${isReady === true ? 'active' : ''}`} id='forth-btn-first' onClick={ moveOn } />
 
             </ButtonsParent>
 

@@ -1,19 +1,20 @@
-const updateThirdStage = (agreement) => {
+const updateThirdStage = (agreement, isReady) => {
     
     return {
         type: 'UPDATE_THIRD_STAGE',
         payload: { 
-            agreement
+            agreement,
+            isReady
         }
     }
 
 }
 
-const updateThirdStageHelper = (agreement) => {
+const updateThirdStageHelper = (agreement, isReady) => {
 
     return dispatch => {
 
-        dispatch(updateThirdStage(agreement))
+        dispatch(updateThirdStage(agreement, isReady))
 
     }
 

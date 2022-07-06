@@ -1,17 +1,12 @@
-
-// IMPORTING CONTAINERS
+// IMPORTING THE MAIN CONTAINER 
 import CompleteView from "./containers/CompleteView";
 
-const style = {
-
-  "fontFamily": "'Public Sans', sans-serif",
-  "boxSizing": "border-box"
-
-}
+// IMPORTING STYLESHEETS
+import './styles/general.sass';
 
 function App() {
   return (
-    <div style={ style }>
+    <div>
     
       <CompleteView />
 

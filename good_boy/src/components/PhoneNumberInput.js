@@ -7,10 +7,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // IMPORTING REDUX ACTIONS
 import { updateSeconsStageHelper } from '../actions/SecondStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass'
 import'../styles/phone_input.sass';
+
+// IMPORTING FUNCTIONS
+import { realtimeValidate } from '../functions/realtimeValidation/inputIsCorrect';
 
 const MainParent = styled.div`
 
@@ -46,10 +50,19 @@ export default function PhoneNumberInput(props) {
 
     const [value, setValue] = useState();
 
+    // SECOND STAGE REDUX STATES
     const name = useSelector(state => state.secondStage.name);
+    const nameInputIsCorrect = useSelector(state => state.secondStage.nameInputIsCorrect);
     const surname = useSelector(state => state.secondStage.surname);
+    const surnameInputIsCorrect = useSelector(state => state.secondStage.surnameInputIsCorrect);
     const email = useSelector(state => state.secondStage.email);
-    const number = useSelector(state => state.secondStage.number);
+    const emailInputIsCorrect = useSelector(state => state.secondStage.emailInputIsCorrect);
+    const numberInputIsCorrect = useSelector(state => state.secondStage.numberInputIsCorrect);
+
+    // REDUX STATES TELLING ABOUT EACH OF THE STAGES IF IT IS READY
+    const firstStageIsReady = useSelector(state => state.firstStage.isReady);
+    const secondStageIsReady = useSelector(state => state.secondStage.isReady);
+    const thirdStageIsReady = useSelector(state => state.thirdStage.isReady);
 
     const handleChange = (e) => {
 
@@ -57,18 +70,29 @@ export default function PhoneNumberInput(props) {
 
             setValue()
 
+            let isCorrect = realtimeValidate('phone-input', e);
+
             let isReady = false;
 
-            if (name!=='' && surname!=='' && email!=='' && e!=='') {
-                isReady = true;
-            }
+            (nameInputIsCorrect===true && surnameInputIsCorrect===true && emailInputIsCorrect===true && isCorrect===true) ? isReady = true : isReady = false;
 
-            dispatch(updateSeconsStageHelper(name, surname, email, e, isReady))
+            dispatch(updateSeconsStageHelper(name, nameInputIsCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, e, isCorrect, isReady))
+
+        } else {
+
+            dispatch(updateSeconsStageHelper(name, nameInputIsCorrect, surname, surnameInputIsCorrect, email, emailInputIsCorrect, '', false, false))
 
         }
 
+        let isReady = false;
+
+        (firstStageIsReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isReady = true : isReady = false;
+
+        dispatch(updateGeneralStateHelper(isReady));
+
     }
 
+    // REDUX DISPATCH FUNCTION USED TO UPDATE ANY STATE OF THE APP
     const dispatch = useDispatch();
 
   return (
@@ -79,8 +103,8 @@ export default function PhoneNumberInput(props) {
             <PhoneInput
                         id="phone-input"
                         placeholder="Zadajte Vaše telefónne číslo"
-                        defaultCountry="SK"
-                        className='active'
+                        defaultCountry='SK'
+                        className={`active ${ numberInputIsCorrect === false  ? 'wrong' : ''}`}
                         international
                         countrySelectProps={{ unicodeFlags: true }}
                         value={ value }

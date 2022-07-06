@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 // IMPORTING ASSETS
 import dogLogo from '../assets/dog_vector.svg';
@@ -136,7 +136,7 @@ export default function Footer() {
                 {/* THE BRANDING LOGO */}
                 <BrandingLogo src={  dogLogo } />
                 {/* THE BRANDING NAME */}
-                <BrandingName> GoodBoy </BrandingName>
+                <BrandingName> Good boy </BrandingName>
             
             </BrandingPart>
 

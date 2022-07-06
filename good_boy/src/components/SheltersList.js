@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import $ from 'jquery';
 
 // IMPORTING FROM MUI MATERIAL
 import FormControl from '@mui/material/FormControl';
@@ -11,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 // IMPORTING REDUX ACTIONS
 import { updateFirstStageHelper } from '../actions/FirstStage';
+import { updateGeneralStateHelper } from '../actions/AllIsReady';
 
 // IMPORTING STYLESHEETS
 import '../styles/animations.sass';
@@ -62,17 +62,32 @@ const LowerPlaceholderPart = styled.p`
 
 export default function SheltersList(props) {
 
-  const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp)
-  const shelter = useSelector(state => state.firstStage.shelter);
+  const shelters = useSelector(state => state.shelters);
+
+  const typeOfHelp = useSelector(state => state.firstStage.typeOfHelp);
   const amount = useSelector(state => state.firstStage.amount);
+
+  const secondStageIsReady = useSelector(state => state.secondStage.isReady);
+  const thirdStageIsReady = useSelector(state => state.thirdStage.isReady);
   
   const dispatch = useDispatch();
   // const [shelter, setShelter] = useState('');
 
   const handleChange = (e) => {
 
-    // setShelter(e.target.value)
-    dispatch(updateFirstStageHelper(typeOfHelp, e.target.value, amount))
+    let shelterID = shelters.filter(item => item['name'] === e.target.value);
+    shelterID = shelterID[0]['id'];
+
+    let isReady = false;
+    (typeOfHelp !== '' && e.target.value !== '' && shelterID !== undefined && amount !== '') ? isReady = true : isReady = false;
+
+    dispatch(updateFirstStageHelper(typeOfHelp, e.target.value, shelterID, amount, isReady))
+
+    let isAllReady = false;
+
+    (isReady === true && secondStageIsReady === true && thirdStageIsReady === true) ? isAllReady = true : isAllReady = false;
+
+    dispatch(updateGeneralStateHelper(isAllReady))
 
   }
 
@@ -122,24 +137,6 @@ export default function SheltersList(props) {
           {sheltersList()}
 
       </Select>
-
-      {/* <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          sx={{
-
-              paddingBottom: '20px',
-              borderRadius: '8px'
-
-          }}
-          defaultValue=""
-          value={shelter}
-          onChange={handleChange}
-          >
-
-          {sheltersList()}
-
-      </Select> */}
 
       </FormControl>
     

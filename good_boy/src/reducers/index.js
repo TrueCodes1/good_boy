@@ -6,6 +6,7 @@ import shelters from './Shelters';
 import firstStage from './FirstStage';
 import secondStage from './SecondStage';
 import thirdStage from './ThirdStage';
+import generalState from './AllIsReady';
 
 const allReducers = combineReducers({
 
@@ -13,7 +14,8 @@ const allReducers = combineReducers({
     shelters,
     firstStage,
     secondStage,
-    thirdStage
+    thirdStage,
+    generalState
 
 })
 
