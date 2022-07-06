@@ -1,8 +1,11 @@
-#How to run the app
+# How to run the app
 
 **git pull https://github.com/TrueCodes1/good_boy**
+
 **cd good_boy**
+
 **npm i react-scripts**
+
 **npm start**
 
 # Zadanie Frontend developer GoodRequest
